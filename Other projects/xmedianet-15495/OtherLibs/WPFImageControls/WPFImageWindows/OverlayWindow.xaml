@@ -1,0 +1,22 @@
+﻿<Window x:Class="WPFImageWindows.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Topmost="True"
+        Loaded="Window_Loaded"
+        AllowsTransparency="True" Background="#22AA0000" WindowStyle="None"  
+        IsVisibleChanged="Window_IsVisibleChanged"
+        Title="Overlay Window" ShowInTaskbar="False">
+
+    <Window.Resources>
+        <Storyboard x:Key="FadeBorder">
+            <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)" Storyboard.TargetName="rectangle">
+                <EasingColorKeyFrame KeyTime="0:0:5" Value="#00FF0000"/>
+            </ColorAnimationUsingKeyFrames>
+        </Storyboard>
+
+
+    </Window.Resources>
+    <Canvas x:Name="GridMain">
+        <Rectangle x:Name="rectangle" Stroke="Red" Fill="#330000FF" StrokeThickness="4" ></Rectangle>
+    </Canvas>
+</Window>

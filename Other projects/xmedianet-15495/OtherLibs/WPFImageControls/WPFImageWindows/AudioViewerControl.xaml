@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="WPFImageWindows.AudioViewerControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="304" d:DesignWidth="408" SizeChanged="UserControl_SizeChanged" Loaded="UserControl_Loaded">
+        <StackPanel>
+            <!--<Grid.RowDefinitions>
+                <RowDefinition Height="200*" />
+                <RowDefinition Height="100*" />
+            </Grid.RowDefinitions>-->
+            <Image Grid.Row="0" VerticalAlignment="Stretch" x:Name="audioimage" Source="http://images.google.com/intl/en_ALL/images/logos/images_logo_lg.gif" SizeChanged="audioimage_SizeChanged" />
+            <!--<Border Grid.Row="1" VerticalAlignment="Stretch" x:Name="BorderMirror" RenderTransformOrigin="0.5,0.5" >
+        	    <Border.OpacityMask>
+        		    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0.0">
+        			    <GradientStop Color="#00000000" Offset="0"/>
+        			    <GradientStop Color="#cc000000" Offset="1"/>
+        		    </LinearGradientBrush>
+        	    </Border.OpacityMask>
+        	    <Border.RenderTransform>
+        		    <TransformGroup>
+        			    <ScaleTransform ScaleY="-1"/>
+        			    <SkewTransform />
+        			    <RotateTransform/>
+        			    <TranslateTransform/>
+        		    </TransformGroup>
+        	    </Border.RenderTransform>
+        	    <Border.Background>
+        		    <VisualBrush Visual="{Binding ElementName=audioimage}"/>
+        	    </Border.Background>
+            </Border>-->
+        </StackPanel>
+</UserControl>

@@ -1,0 +1,13 @@
+﻿<Window x:Class="WPFImageWindows.ScreenGrabWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Loaded="Window_Loaded"
+        Title="ScreenGrabWindow" Height="103" Width="344">
+    <Grid>
+        <StackPanel Orientation="Horizontal">
+            <Label>Desktop</Label>
+            <ComboBox x:Name="ComboBoxDesktops" Width="200"></ComboBox>
+            <Button x:Name="ButtonSelect">Select</Button>
+        </StackPanel>
+    </Grid>
+</Window>

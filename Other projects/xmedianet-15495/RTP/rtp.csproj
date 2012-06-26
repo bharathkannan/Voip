@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{69A1BADF-4974-4D35-A3EC-75B77B0A003B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RTP</RootNamespace>
+    <AssemblyName>rtp</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="NSpeex">
+      <HintPath>..\..\..\Development\nspeex\main\NSpeex\bin\Debug\NSpeex.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AudioConferenceMixer.cs" />
+    <Compile Include="Codecs\Codec.cs" />
+    <Compile Include="Codecs\G711Codec.cs" />
+    <Compile Include="Codecs\G722Codec.cs" />
+    <Compile Include="Codecs\G722CodecWrapper.cs" />
+    <Compile Include="Codecs\SpeexCodec.cs" />
+    <Compile Include="Codecs\UDPMotionJpegCodec.cs" />
+    <Compile Include="ICE.cs" />
+    <Compile Include="JingleMediaSession.cs" />
+    <Compile Include="RTCPSession.cs" />
+    <Compile Include="RTPAudioStream.cs" />
+    <Compile Include="RTPPacketBuffer.cs" />
+    <Compile Include="RTPStream.cs" />
+    <Compile Include="RTPIncomingAudioStream.cs" />
+    <Compile Include="RTPIncomingVideoFeed.cs" />
+    <Compile Include="RTPOutgoingAudioStream.cs" />
+    <Compile Include="RTPOutgoingVideoFeed.cs" />
+    <Compile Include="RTPPacket.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="STUN.cs" />
+    <Compile Include="STUNClasses.cs" />
+    <Compile Include="TCPRTPAudioStream.cs" />
+    <Compile Include="UniversalVideoStream.cs" />
+    <Compile Include="VideoFrameFragmentor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OtherLibs\AudioClasses\AudioClasses.csproj">
+      <Project>{CB219B28-DC51-4E22-BC61-80B97D8A39C0}</Project>
+      <Name>AudioClasses</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SocketServer\socketserver.csproj">
+      <Project>{77F78E2F-A04F-4823-A2A9-3F1F27D0F8B8}</Project>
+      <Name>socketserver</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\XMPPLibrary\xmpp.csproj">
+      <Project>{8DE3A173-A7A8-447F-846E-16C95F9C22AE}</Project>
+      <Name>xmpp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

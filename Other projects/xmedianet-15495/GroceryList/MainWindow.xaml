@@ -1,0 +1,36 @@
+﻿<Window x:Class="GroceryList.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Loaded="Window_Loaded"
+        Title="MainWindow" Height="400" Width="567">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="302*" />
+        </Grid.RowDefinitions>
+        
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <Label>Item</Label>
+            <TextBox x:Name="TextBoxNewGroceryItem" Width="100">carrots</TextBox>
+            <Label>Price</Label>
+            <TextBox x:Name="TextBoxPrice" Width="100">$0.00</TextBox>
+            <Button x:Name="ButtonAddToGroceryList" Padding="4" Click="ButtonAddToGroceryList_Click">Add To List</Button>
+        </StackPanel>
+        
+        <ListView x:Name="ListViewGroceryList" Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Width="150" Content="{Binding Name}" IsChecked="{Binding IsAccountedFor}" />
+                        <TextBox Width="100" Text="{Binding Price}" />
+                        <Label Width="200" Content="{Binding Person}" />
+                        <Button x:Name="ButtonUpdate" Click="ButtonUpdate_Click"  Content="Update" />
+                        <Button x:Name="ButtonDelete" Click="ButtonDelete_Click" Content="Delete" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
+    </Grid>
+</Window>

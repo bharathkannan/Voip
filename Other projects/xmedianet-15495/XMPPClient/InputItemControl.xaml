@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="XMPPClient.InputItemControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+             Background="Black"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+             Loaded="UserControl_Loaded" Height="218" Width="367">
+
+    <Border>
+    	<Border.Background>
+    		<SolidColorBrush Color="{StaticResource PhoneBackgroundColor}"/>
+    	</Border.Background>
+        <Grid x:Name="LayoutRoot" Margin="20">
+        	<Grid.Background>
+        		<SolidColorBrush Color="{StaticResource PhoneChromeColor}"/>
+        	</Grid.Background>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="70" />
+                <RowDefinition Height="70" />
+            </Grid.RowDefinitions>
+        
+            <TextBlock Text="{Binding InputLabel}" x:Name="TextBlockTitle" Grid.Row="0" />
+            <TextBox Text="{Binding InputValue,Mode=TwoWay}" x:Name="TextBoxInput" Grid.Row="1" />
+            <Button HorizontalAlignment="Right" Width="169" Content="OK" Grid.Row="2" Click="Button_Click" />
+        
+            </Grid>
+    </Border>
+</UserControl>

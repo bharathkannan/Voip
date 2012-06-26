@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="WPFImageWindows.VideoControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        mc:Ignorable="d" 
+        SizeChanged="UserControl_SizeChanged" 
+        d:DesignHeight="240" d:DesignWidth="352">
+
+    <Grid Background="Black">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80*" />
+            <RowDefinition Height="20" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.RowSpan="2"  CanContentScroll="False" x:Name="ScrollViewerThing" HorizontalScrollBarVisibility="Hidden"  VerticalScrollBarVisibility="Hidden" SizeChanged="ScrollViewerThing_SizeChanged" Cursor="Hand" >
+            <Image x:Name="videoimage" Stretch="Uniform" />
+        </ScrollViewer>
+        <Label Foreground="White" Name="labelStatus" HorizontalAlignment="Center" Grid.Row="1" VerticalAlignment="Top"></Label>
+
+    </Grid>
+  
+</UserControl>

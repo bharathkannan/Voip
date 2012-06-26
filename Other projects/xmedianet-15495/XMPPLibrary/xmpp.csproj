@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8DE3A173-A7A8-447F-846E-16C95F9C22AE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>XMPPLibrary</RootNamespace>
+    <AssemblyName>xmpp</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Surface, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Surface.Presentation, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Surface.Presentation.Generic, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\PhoneXMPPLibrary\Conversation.cs">
+      <Link>Conversation.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\FileTransfer.cs">
+      <Link>FileTransfer.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Forms\DataForm.cs">
+      <Link>Forms\DataForm.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Forms\FormFieldAttribute.cs">
+      <Link>Forms\FormFieldAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Forms\PubSubConfigForm.cs">
+      <Link>Forms\PubSubConfigForm.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Forms\PubSubSubscribeAuthorizationForm.cs">
+      <Link>Forms\PubSubSubscribeAuthorizationForm.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\JID.cs">
+      <Link>JID.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\AvatarStorage.cs">
+      <Link>Logic\AvatarStorage.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\FeatureLogic.cs">
+      <Link>Logic\FeatureLogic.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\GenericMessageLogic.cs">
+      <Link>Logic\GenericMessageLogic.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\GeoMood.cs">
+      <Link>Logic\GeoMood.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\IQLogic.cs">
+      <Link>Logic\IQLogic.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\JingleLogic.cs">
+      <Link>Logic\JingleLogic.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\Logic.cs">
+      <Link>Logic\Logic.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\PersonalEventingLogic.cs">
+      <Link>Logic\PersonalEventingLogic.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\PresenceLogic.cs">
+      <Link>Logic\PresenceLogic.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\PubSubClasses.cs">
+      <Link>Logic\PubSubClasses.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\PubSubNodeManager.cs">
+      <Link>Logic\PubSubNodeManager.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\RosterLogic.cs">
+      <Link>Logic\RosterLogic.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\ServiceDiscoveryLogic.cs">
+      <Link>Logic\ServiceDiscoveryLogic.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\SOCKS5Listener.cs">
+      <Link>Logic\SOCKS5Listener.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\StreamInitiationAndTransferLogic.cs">
+      <Link>Logic\StreamInitiationAndTransferLogic.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\StreamNegotiationLogic.cs">
+      <Link>Logic\StreamNegotiationLogic.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\Utility.cs">
+      <Link>Logic\Utility.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Logic\vcard.cs">
+      <Link>Logic\vcard.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\MD5.cs">
+      <Link>MD5.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\ObserverableCollectionEx.cs">
+      <Link>ObserverableCollectionEx.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\PresenceStatus.cs">
+      <Link>PresenceStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\PubSub\PubSubStuff.cs">
+      <Link>PubSub\PubSubStuff.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\Roster.cs">
+      <Link>Roster.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\ServiceDiscovery.cs">
+      <Link>ServiceDiscovery.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\XMPPClient.cs">
+      <Link>XMPPClient.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\XMPPConnection.cs">
+      <Link>XMPPConnection.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\XMPPMessage.cs">
+      <Link>XMPPMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\XMPPMessageFactory.cs">
+      <Link>XMPPMessageFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\XMPPStanza.cs">
+      <Link>XMPPStanza.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\XMPPStorageCredentials.cs">
+      <Link>XMPPStorageCredentials.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\XMPPStream.cs">
+      <Link>XMPPStream.cs</Link>
+    </Compile>
+    <Compile Include="..\PhoneXMPPLibrary\XMPPXMLNode.cs">
+      <Link>XMPPXMLNode.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Windows\LoginWindow.xaml.cs">
+      <DependentUpon>LoginWindow.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SocketServer\socketserver.csproj">
+      <Project>{77F78E2F-A04F-4823-A2A9-3F1F27D0F8B8}</Project>
+      <Name>socketserver</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Windows\LoginWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

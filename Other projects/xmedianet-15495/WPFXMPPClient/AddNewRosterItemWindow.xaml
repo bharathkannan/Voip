@@ -1,0 +1,24 @@
+﻿<Window x:Class="WPFXMPPClient.AddNewRosterItemWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:s="http://schemas.microsoft.com/surface/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Add Buddy" Height="178" Width="300">
+
+
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal">
+            <Label Width="100">Contact ID (JID)</Label>
+            <s:SurfaceTextBox Width="150" x:Name="TextBoxJID"></s:SurfaceTextBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Label Width="100">Nickname</Label>
+            <s:SurfaceTextBox Width="150" x:Name="TextBoxNickname" ></s:SurfaceTextBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Label Width="100">Group</Label>
+            <s:SurfaceTextBox Width="150" x:Name="TextBoxGroup" >Friends</s:SurfaceTextBox>
+        </StackPanel>
+
+        <s:SurfaceButton HorizontalAlignment="Right" IsDefault="True" Click="SurfaceButton_Click">Add Buddy</s:SurfaceButton>
+    </StackPanel>
+</Window>
