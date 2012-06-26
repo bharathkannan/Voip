@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7EC1E48F-1605-499B-906A-ECA507BB27F8}</ProjectGuid>
+    <ProjectTypeGuids>{C089C8C0-30E0-4E22-80C0-CE093F111A43};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>phone.rtp</RootNamespace>
+    <AssemblyName>phone.rtp</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <TargetFrameworkProfile>WindowsPhone71</TargetFrameworkProfile>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Phone" />
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="mscorlib.extensions" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\RTP\AudioConferenceMixer.cs">
+      <Link>AudioConferenceMixer.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\Codecs\Codec.cs">
+      <Link>Codecs\Codec.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\Codecs\G711Codec.cs">
+      <Link>Codecs\G711Codec.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\Codecs\G722Codec.cs">
+      <Link>Codecs\G722Codec.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\Codecs\G722CodecWrapper.cs">
+      <Link>Codecs\G722CodecWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\Codecs\UDPMotionJpegCodec.cs">
+      <Link>Codecs\UDPMotionJpegCodec.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\ICE.cs">
+      <Link>ICE.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\JingleMediaSession.cs">
+      <Link>JingleMediaSession.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\RTCPSession.cs">
+      <Link>RTCPSession.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\RTPAudioStream.cs">
+      <Link>RTPAudioStream.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\RTPIncomingAudioStream.cs">
+      <Link>RTPIncomingAudioStream.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\RTPIncomingVideoFeed.cs">
+      <Link>RTPIncomingVideoFeed.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\RTPOutgoingAudioStream.cs">
+      <Link>RTPOutgoingAudioStream.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\RTPOutgoingVideoFeed.cs">
+      <Link>RTPOutgoingVideoFeed.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\RTPPacket.cs">
+      <Link>RTPPacket.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\RTPPacketBuffer.cs">
+      <Link>RTPPacketBuffer.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\RTPStream.cs">
+      <Link>RTPStream.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\STUN.cs">
+      <Link>STUN.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\STUNClasses.cs">
+      <Link>STUNClasses.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\TCPRTPAudioStream.cs">
+      <Link>TCPRTPAudioStream.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\UniversalVideoStream.cs">
+      <Link>UniversalVideoStream.cs</Link>
+    </Compile>
+    <Compile Include="..\RTP\VideoFrameFragmentor.cs">
+      <Link>VideoFrameFragmentor.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OtherLibs\phone.AudioClasses\phone.AudioClasses.csproj">
+      <Project>{AA9373BE-5A3F-4DA0-86D8-448D2AA9BBAD}</Project>
+      <Name>phone.AudioClasses</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PhoneSocketServer\phone.socketserver.csproj">
+      <Project>{CCDE1A18-482A-469C-9115-3C51723026B7}</Project>
+      <Name>phone.socketserver</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PhoneXMPPLibrary\phone.xmpp.csproj">
+      <Project>{08CA3C52-B65B-43F1-B60E-9A0F53021959}</Project>
+      <Name>phone.xmpp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

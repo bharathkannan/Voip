@@ -1,0 +1,83 @@
+﻿<phone:PhoneApplicationPage 
+    x:Class="XMPPClient.ConnectPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d" shell:SystemTray.IsVisible="True" d:DesignHeight="696" d:DesignWidth="480" xmlns:my="clr-namespace:XMPPClient">
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="Black">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+
+        <!--TitlePanel contains the name of the application and page title-->
+        <toolkit:ListPicker Background="#FFDEFFFF" SelectionChanged="AccountPicker_SelectionChanged" x:Name="AccountPicker" 
+                            Header="Pick Account" ItemsSource="Account">
+            <toolkit:ListPicker.FullModeItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="16 21 0 20">
+                        <TextBlock Text="{Binding AccountName}"
+                                        Margin="0 0 0 0"
+                                        FontSize="43" 
+                                        FontFamily="{StaticResource PhoneFontFamilyLight}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </toolkit:ListPicker.FullModeItemTemplate>
+        </toolkit:ListPicker>
+
+        <!--ContentPanel - place additional content here-->
+
+        <ScrollViewer x:Name="MainScrollViewer" Grid.Row="1" VerticalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <StackPanel Margin="5,0">
+                <TextBlock>Server</TextBlock>
+                <TextBox x:Name="TextBoxServer" Text="{Binding Server,Mode=TwoWay}" />
+                <TextBlock>Domain</TextBlock>
+                <TextBox x:Name="TextBoxDomain" Text="{Binding JID.Domain,Mode=TwoWay}" />
+                <TextBlock>User Name</TextBlock>
+                <TextBox x:Name="TextBoxUserName" Text="{Binding JID.User,Mode=TwoWay}" />
+                <TextBlock>Password</TextBlock>
+                <PasswordBox x:Name="TextBoxPassword" PasswordChanged="TextBoxPassword_PasswordChanged" Password=""></PasswordBox>
+                <TextBlock>Resource</TextBlock>
+                <TextBox x:Name="TextBoxResource" Text="{Binding JID.Resource,Mode=TwoWay}" />
+                <TextBlock>Port</TextBlock>
+                <TextBox InputScope="number" x:Name="TextBoxPort" Text="{Binding Port,Mode=TwoWay}" />
+                <CheckBox x:Name="CheckBoxUseOldSSLMethod" Checked="CheckBoxUseOldSSLMethod_Checked"  Unchecked="CheckBoxUseOldSSLMethod_Unchecked"  IsChecked="{Binding UseOldSSLMethod,Mode=TwoWay}">Use Old SSL Method (5223)</CheckBox>
+
+                <CheckBox x:Name="CheckBoxUseSOCKS" IsChecked="{Binding UseSOCKSProxy,Mode=TwoWay}">Use SOCKS</CheckBox>
+                <TextBlock>Proxy Server</TextBlock>
+                <TextBox x:Name="TextBoxProxyServer" Text="{Binding ProxyName,Mode=TwoWay}" />
+                <TextBlock>Proxy Port</TextBlock>
+                <TextBox x:Name="TextBoxProxyPort" Text="{Binding ProxyPort,Mode=TwoWay}" />
+                <TextBlock>SOCKS Version</TextBlock>
+                <TextBox x:Name="TextBoxSocksVersion" Text="{Binding SOCKSVersion,Mode=TwoWay}" />
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <my:InputItemControl OnInputSaved="AccountNameInputControl_OnInputSaved"  x:Name="AccountNameInputControl" InputLabel="Enter New Account Name" 
+                             Visibility="Collapsed" Grid.RowSpan="2"
+                             Width="480" Height="250" VerticalAlignment="Top" Margin="0,100,0,0" Background="Black" BorderBrush="White" />
+
+    </Grid>
+ 
+    <!--Sample code showing usage of ApplicationBar-->
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar x:Name="OurApplicationBar" IsVisible="True" IsMenuEnabled="True">
+            <shell:ApplicationBarIconButton x:Name="ButtonConnect" Click="ButtonConnect_Click" IconUri="Images/connect.png" Text="Connect"/>
+            <shell:ApplicationBarIconButton x:Name="ButtonNewAccount" Click="ButtonNewAccount_Click" IconUri="Images/add.png" Text="Add Account"/>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
+
+</phone:PhoneApplicationPage>

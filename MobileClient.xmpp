@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "phone.xmpp", "PhoneXMPPLibrary\phone.xmpp.csproj", "{08CA3C52-B65B-43F1-B60E-9A0F53021959}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "phone.AudioClasses", "OtherLibs\phone.AudioClasses\phone.AudioClasses.csproj", "{AA9373BE-5A3F-4DA0-86D8-448D2AA9BBAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "phone.rtp", "phone.rtp\phone.rtp.csproj", "{7EC1E48F-1605-499B-906A-ECA507BB27F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "phone.socketserver", "PhoneSocketServer\phone.socketserver.csproj", "{CCDE1A18-482A-469C-9115-3C51723026B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoneSoundEffectsAudioPlaybackAgent", "PhoneSoundEffectsAudioPlaybackAgent\PhoneSoundEffectsAudioPlaybackAgent.csproj", "{741BC747-C5AF-4558-8E83-2E214F2EEF47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoneXMPPClient", "XMPPClient\PhoneXMPPClient.csproj", "{8629E306-E0C8-4523-AFF6-F88C6E8E8EDA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{08CA3C52-B65B-43F1-B60E-9A0F53021959}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08CA3C52-B65B-43F1-B60E-9A0F53021959}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08CA3C52-B65B-43F1-B60E-9A0F53021959}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08CA3C52-B65B-43F1-B60E-9A0F53021959}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA9373BE-5A3F-4DA0-86D8-448D2AA9BBAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA9373BE-5A3F-4DA0-86D8-448D2AA9BBAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA9373BE-5A3F-4DA0-86D8-448D2AA9BBAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA9373BE-5A3F-4DA0-86D8-448D2AA9BBAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EC1E48F-1605-499B-906A-ECA507BB27F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EC1E48F-1605-499B-906A-ECA507BB27F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EC1E48F-1605-499B-906A-ECA507BB27F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EC1E48F-1605-499B-906A-ECA507BB27F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCDE1A18-482A-469C-9115-3C51723026B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCDE1A18-482A-469C-9115-3C51723026B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCDE1A18-482A-469C-9115-3C51723026B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCDE1A18-482A-469C-9115-3C51723026B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{741BC747-C5AF-4558-8E83-2E214F2EEF47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{741BC747-C5AF-4558-8E83-2E214F2EEF47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{741BC747-C5AF-4558-8E83-2E214F2EEF47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{741BC747-C5AF-4558-8E83-2E214F2EEF47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8629E306-E0C8-4523-AFF6-F88C6E8E8EDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8629E306-E0C8-4523-AFF6-F88C6E8E8EDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8629E306-E0C8-4523-AFF6-F88C6E8E8EDA}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{8629E306-E0C8-4523-AFF6-F88C6E8E8EDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8629E306-E0C8-4523-AFF6-F88C6E8E8EDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8629E306-E0C8-4523-AFF6-F88C6E8E8EDA}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
