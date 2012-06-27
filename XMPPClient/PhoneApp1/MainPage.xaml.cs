@@ -109,13 +109,14 @@ namespace PhoneApp1
             MicrophoneThread = new Thread(new ThreadStart(MicrophoneThreadFunction));
             MicrophoneThread.Name = "Microphone Thread";
             MicrophoneThread.Start();
-            Log("Mic Started");
         }
 
 
         public void MicrophoneThreadFunction()
         {
+
             StartMic();
+            Log("Mic started");
             int nSamplesPerPacket = stream.AudioCodec.AudioFormat.CalculateNumberOfSamplesForDuration(TimeSpan.FromMilliseconds(stream.PTimeTransmit));
             int nBytesPerPacket = nSamplesPerPacket * stream.AudioCodec.AudioFormat.BytesPerSample;
             TimeSpan tsPTime = TimeSpan.FromMilliseconds(stream.PTimeTransmit);
@@ -146,6 +147,7 @@ namespace PhoneApp1
                     System.Threading.Thread.Sleep(nMsRemaining);
                 }
             }
+            Log("Stopping Mic");
             StopMic();
         }
 

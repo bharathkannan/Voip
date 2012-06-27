@@ -80,12 +80,14 @@ namespace VoipReceive
         {
             stream = new RTPAudioStream(0, null);
             stream.Bind(localEp);
+            Log(localEp.ToString());
             stream.AudioCodec = new G722CodecWrapper();
             stream.UseInternalTimersForPacketPushPull = false;
-        }
+        }     
         
         public void SpeakerThreadFunction()
-        { 
+        {
+            Log("Start Receiving");
             TimeSpan tsPTime = TimeSpan.FromMilliseconds(stream.PTimeReceive);
             int nSamplesPerPacket = stream.AudioCodec.AudioFormat.CalculateNumberOfSamplesForDuration(tsPTime);
             int nBytesPerPacket = nSamplesPerPacket * stream.AudioCodec.AudioFormat.BytesPerSample;
@@ -167,7 +169,7 @@ namespace VoipReceive
         private void button6_Click(object sender, RoutedEventArgs e)
         {
             String username = textBox2.Text;
-            remote = stream.CallUser(username);
+            remote = stream.CallUser(username,textBox1.Text);
             Log("Calling " + remote.ToString());
             StartCall();
         }
@@ -184,17 +186,16 @@ namespace VoipReceive
             SpeakerThread = new Thread(new ThreadStart(SpeakerThreadFunction));
             SpeakerThread.Name = "Speaker Thread";
             SpeakerThread.Start();
-            Log("Speaker Started");
 
             MicrophoneThread = new Thread(new ThreadStart(MicrophoneThreadFunction));
             MicrophoneThread.Name = "Microphone Thread";
             MicrophoneThread.Start();
-            Log("Mic Started");
         }
 
         public void MicrophoneThreadFunction()
         {
             StartMic();
+            Log("Mic Started");
             int nSamplesPerPacket = stream.AudioCodec.AudioFormat.CalculateNumberOfSamplesForDuration(TimeSpan.FromMilliseconds(stream.PTimeTransmit));
             int nBytesPerPacket = nSamplesPerPacket * stream.AudioCodec.AudioFormat.BytesPerSample;
             TimeSpan tsPTime = TimeSpan.FromMilliseconds(stream.PTimeTransmit);
@@ -224,6 +225,7 @@ namespace VoipReceive
                     System.Threading.Thread.Sleep(nMsRemaining);
                 }
             }
+            Log("Mic Stopped");
             StopMic();
         }
 
