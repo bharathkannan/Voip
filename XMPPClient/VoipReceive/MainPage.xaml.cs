@@ -49,26 +49,12 @@ namespace VoipReceive
             InitializeStream();
         }
 
-        void SafeStartMediaElement(object obj, EventArgs args)
-        {
-            if (AudioStream.CurrentState != MediaElementState.Playing)
-            {
-                AudioStream.BufferingTime = new TimeSpan(0, 0, 0);
-
-                AudioStream.SetSource(source);
-                AudioStream.Play();
-            }
-        }
-        void SafeStopMediaElement(object obj, EventArgs args)
-        {
-            AudioStream.Stop();
-        }
 
         void Log(string message)
         {
             Deployment.Current.Dispatcher.BeginInvoke(() => { textBlock1.Text += message + '\n'; });
         }
-        
+
         void FindMyIP()
         {
             MyIPAddress my = new MyIPAddress();
@@ -84,6 +70,24 @@ namespace VoipReceive
             stream.AudioCodec = new G722CodecWrapper();
             stream.UseInternalTimersForPacketPushPull = false;
         }     
+       
+        
+        void SafeStartMediaElement(object obj, EventArgs args)
+        {
+            if (AudioStream.CurrentState != MediaElementState.Playing)
+            {
+                AudioStream.BufferingTime = new TimeSpan(0, 0, 0);
+
+                AudioStream.SetSource(source);
+                AudioStream.Play();
+            }
+        }
+        void SafeStopMediaElement(object obj, EventArgs args)
+        {
+            AudioStream.Stop();
+        }
+
+      
         
         public void SpeakerThreadFunction()
         {
@@ -165,7 +169,19 @@ namespace VoipReceive
 
         }
 
-     
+
+        public void  FindStunAddress()
+        {
+            JingleMediaSession session = new JingleMediaSession(localEp);
+            session.AudioRTPStream = stream;
+            IPEndPoint ep = session.PerformSTUNRequest(new DnsEndPoint("stun.ekiga.net",3478),4000);
+            Log(ep.ToString());
+            IPEndPoint ep1 = session.PerformSTUNRequest(new DnsEndPoint("stun.endigovoip.com", 3478), 4000);
+            Log(ep.ToString());
+
+
+
+        }        
         private void button6_Click(object sender, RoutedEventArgs e)
         {
             String username = textBox2.Text;
@@ -260,6 +276,11 @@ namespace VoipReceive
                 //do start of mic and headphone and other stream stuff
                 StartCall();
             }
+        }
+
+        private void button2_Click(object sender, RoutedEventArgs e)
+        {
+            this.FindStunAddress();
         }
 
 

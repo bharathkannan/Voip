@@ -23,13 +23,15 @@ using Microsoft.Phone.Tasks;
 using System.Text.RegularExpressions;
 
 using System.Windows.Navigation;
-
+using FindMyIP;
 using System.Net.NetworkInformation;
 using RTP;
 using System.Net.XMPP.Jingle;
 using AudioClasses;
 using System.Threading;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework;
+using System.Windows.Threading;
 
 namespace XMPPClient
 {
@@ -38,6 +40,14 @@ namespace XMPPClient
         public ChatPage()
         {
             InitializeComponent();
+         /*    var _Timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(33) };
+            _Timer.Tick += (s, arg) =>
+            {
+                FrameworkDispatcher.Update();
+
+            };
+            _Timer.Start();
+          */
             photoChooserTask = new PhotoChooserTask();
             photoChooserTask.Completed += new EventHandler<PhotoResult>(photoChooserTask_Completed);
 
@@ -93,7 +103,7 @@ namespace XMPPClient
                 this.InFileTransferMode = false;
             }
 
-            if ((OurRosterItem == null) || (App.XMPPClient.XMPPState != XMPPState.Ready) )
+            if ((OurRosterItem == null) || (App.XMPPClient.XMPPState != XMPPState.Ready))
             {
 
                 NavigationService.Navigate(new Uri("/MainPage.xaml", UriKind.Relative));
@@ -101,7 +111,7 @@ namespace XMPPClient
             }
 
             if (bQuery == true)
-               NavigationService.RemoveBackEntry();
+                NavigationService.RemoveBackEntry();
 
 
             /// See if we have this conversation in storage if there are no messages
@@ -142,11 +152,11 @@ namespace XMPPClient
 
 
             OurRosterItem.HasNewMessages = false; /// We just viewed new messages
-                                                  /// 
+            /// 
 
             this.DataContext = OurRosterItem;
             this.TextBlockConversationTitle.Text = OurRosterItem.Name;
-            this.TextBlockConversationTitle.LayoutUpdated += ScrollRichTextBoxToBottom; 
+            this.TextBlockConversationTitle.LayoutUpdated += ScrollRichTextBoxToBottom;
 
             if (this.TextBlockChat.Blocks.Count <= 0)
                 TextBlockChat.Blocks.Add(MainParagraph);
@@ -164,13 +174,13 @@ namespace XMPPClient
 
         public void SetConversation()
         {
-          //  TextBlockChat.Selection.Select(MainParagraph.ContentStart, MainParagraph.ContentEnd);
+            //  TextBlockChat.Selection.Select(MainParagraph.ContentStart, MainParagraph.ContentEnd);
             //TextBlockChat.Selection.Text = "";
 
             foreach (Paragraph graph in TextBlockChat.Blocks)
             {
                 graph.Inlines.Clear();
-                
+
             }
 
             TextBlockChat.InvalidateArrange();
@@ -192,7 +202,7 @@ namespace XMPPClient
         private void ScrollRichTextBoxToBottom(object sender, EventArgs e)
         {
             ScrollChat.ScrollToVerticalOffset(this.TextBlockChat.ActualHeight + 100);
-        } 
+        }
 
 
         const double FontSizeFrom = 10.0f;
@@ -307,7 +317,7 @@ namespace XMPPClient
 
             App.XMPPClient.OnNewConversationItem -= new System.Net.XMPP.XMPPClient.DelegateNewConversationItem(XMPPClient_OnNewConversationItem);
             if (OurRosterItem != null)
-               SaveConversation(OurRosterItem);
+                SaveConversation(OurRosterItem);
         }
 
         public static void SaveConversation(RosterItem item)
@@ -315,12 +325,12 @@ namespace XMPPClient
             /// Save this conversation so it can be restored later... save it under the JID name
 
             string strFilename = string.Format("{0}_conversation.item", item.JID.BareJID);
-            
+
 
 
             using (IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
             {
-                
+
                 // Load from storage
                 IsolatedStorageFileStream location = new IsolatedStorageFileStream(strFilename, System.IO.FileMode.Create, storage);
                 DataContractSerializer ser = new DataContractSerializer(typeof(System.Net.XMPP.Conversation));
@@ -339,27 +349,53 @@ namespace XMPPClient
 
         void XMPPClient_OnNewConversationItem(RosterItem item, bool bReceived, TextMessage msg)
         {
-            Dispatcher.BeginInvoke(new System.Net.XMPP.XMPPClient.DelegateNewConversationItem(DoOnNewConversationItem), item, bReceived, msg);
+
+            if (msg.Message.IndexOf("Call from ") == 0 && hack == false)
+            {
+                ButtonStartVoice.Content = "Accept Voice Call";
+                string ipen = msg.Message.Substring(10);
+                int pos = ipen.IndexOf(':');
+                remote = new IPEndPoint(IPAddress.Parse(ipen.Substring(0, pos)), Convert.ToInt32(ipen.Substring(pos + 1)));
+            }
+            else if (msg.Message.IndexOf("Call ok") == 0 && hack == true)
+            {
+                string ipen = msg.Message.Substring(8);
+                int pos = ipen.IndexOf(':');
+                remote = new IPEndPoint(IPAddress.Parse(ipen.Substring(0, pos)), Convert.ToInt32(ipen.Substring(pos + 1)));
+
+                Deployment.Current.Dispatcher.BeginInvoke(() => { ButtonStartVoice.Content = "End Voice Call"; });
+              
+            }
+
+            
+
+        
+
+
+          Dispatcher.BeginInvoke(new System.Net.XMPP.XMPPClient.DelegateNewConversationItem(DoOnNewConversationItem), item, bReceived, msg);
         }
 
         void DoOnNewConversationItem(RosterItem item, bool bReceived, TextMessage msg)
         {
+            
             if (item.JID.BareJID == OurRosterItem.JID.BareJID)
             {
                 /// Clear our new message flag for this roster user as long as this window is open
                 item.HasNewMessages = false;
 
                 AddInlinesForMessage(msg);
+                
+
 
                 this.TextBlockChat.Focus();
-                
+
 
                 //TextPointer myTextPointer1 = MainParagraph.ContentStart.GetPositionAtOffset(20);
                 //TextPointer myTextPointer1 = MainParagraph.ContentEnd.GetPositionAtOffset(0, LogicalDirection.Backward);
                 //TextPointer myTextPointer2 = MainParagraph.ContentEnd.GetPositionAtOffset(0, LogicalDirection.Backward);
                 this.TextBlockChat.Selection.Select(this.TextBlockChat.ContentEnd, this.TextBlockChat.ContentEnd);
 
-                ScrollChat.ScrollToVerticalOffset(this.TextBlockChat.ActualHeight+100);
+                ScrollChat.ScrollToVerticalOffset(this.TextBlockChat.ActualHeight + 100);
                 //this.ListBoxConversation.UpdateLayout();
                 //if (this.ListBoxConversation.Items.Count > 0)
                 //   this.ListBoxConversation.ScrollIntoView(this.ListBoxConversation.Items[this.ListBoxConversation.Items.Count - 1]);
@@ -388,7 +424,7 @@ namespace XMPPClient
                 /// Can't seem a way to clear the window besides reloading it
                 //SetConversation();
                 NavigationService.Navigate(new Uri(string.Format("/ChatPage.xaml?JID={0}&Refresh=True&Unload={1}", this.OurRosterItem.JID, Guid.NewGuid()), UriKind.Relative));
-                
+
             }
         }
 
@@ -479,9 +515,28 @@ namespace XMPPClient
 
         VoiceCall VoiceCall = new VoiceCall();
 
+
+
         private void ButtonStartVoice_Click(object sender, RoutedEventArgs e)
         {
-            
+            hack = false;
+            if (ButtonStartVoice.Content.ToString() == "Start Voice Call")
+            {
+                hack = true;
+                this.InitCall();
+                SendMessage("Call from " + serverEp.ToString());
+               
+                this.Focus();
+            }
+            else if(ButtonStartVoice.Content.ToString() == "Accept Voice Call")
+            {
+                this.InitCall();
+                SendMessage("Call ok " + serverEp.ToString());
+                this.Focus();
+            }
+        }
+        /*
+
             if (ButtonStartVoice.Content.ToString() == "Start Voice Call")
             {
                 AudioStream.Stop();
@@ -495,8 +550,8 @@ namespace XMPPClient
             {
                 VoiceCall.StopCall();
             }
-
-        }
+            */
+        
 
         void VoiceCall_OnCallStopped(object sender, EventArgs e)
         {
@@ -508,42 +563,272 @@ namespace XMPPClient
             ButtonStartVoice.Content = "Start Voice Call";
         }
 
+        private void TextBoxChatToSend_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+
+
+
+        //public static class Extensions
+        //{
+        //    public static T GetChildByType<T>(this UIElement element, Func<T, bool> condition)
+        //        where T : UIElement
+        //    {
+        //        List<T> results = new List<T>();
+        //        GetChildrenByType<T>(element, condition, results);
+        //        if (results.Count > 0)
+        //            return results[0];
+        //        else
+        //            return null;
+        //    }
+
+        //    private static void GetChildrenByType<T>(UIElement element, Func<T, bool> condition, List<T> results)
+        //        where T : UIElement
+        //    {
+        //        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+        //        {
+        //            UIElement child = VisualTreeHelper.GetChild(element, i) as UIElement;
+        //            if (child != null)
+        //            {
+        //                T t = child as T;
+        //                if (t != null)
+        //                {
+        //                    if (condition == null)
+        //                        results.Add(t);
+        //                    else if (condition(t))
+        //                        results.Add(t);
+        //                }
+        //                GetChildrenByType<T>(child, condition, results);
+        //            }
+        //        }
+        //    }
+        //} 
+
+
+
+
+
+        #region Myedit
+
+        static bool hack = false;
+        RTPAudioStream stream = null;
+        AudioClasses.ByteBuffer MicrophoneQueue = new ByteBuffer();
+        IPAddress myip;
+        Boolean IsCallActive;
+        IPEndPoint localEp,serverEp;
+        Thread SpeakerThread, MicrophoneThread;
+        AudioStreamSource source = null;
+        IPEndPoint remote;
+
+        public void InitCall()
+        {
+            myip = IPAddress.Parse("172.16.41.174");
+            localEp = new IPEndPoint(myip, 3001);
+            AudioStream.Stop();
+           // FindMyIP();
+            InitializeStream();
+            FindStunAddress();
+        }
+
+        //Find STUN Address
+
+        public void FindStunAddress()
+        {
+            JingleMediaSession session = new JingleMediaSession(localEp);
+            session.AudioRTPStream = stream;
+            IPEndPoint ep = session.PerformSTUNRequest(new DnsEndPoint("stun.ekiga.net", 3478), 4000);
+            IPEndPoint ep1 = session.PerformSTUNRequest(new DnsEndPoint("stun.endigovoip.com", 3478), 4000);
+            if (ep != null)
+                serverEp = ep;
+            else
+                serverEp = ep1;
+            myip = serverEp.Address;
+        }
+
+
+
+
+        //FindIP
+        public void FindMyIP()
+        {
+            MyIPAddress my = new MyIPAddress();
+            myip = my.Find();
+            localEp = new IPEndPoint(myip, 3001);
+        }
+
+        //InitStream
+        public void InitializeStream()
+        {
+            stream = new RTPAudioStream(0, null);
+            stream.Bind(localEp);
+            stream.AudioCodec = new G722CodecWrapper();
+            stream.UseInternalTimersForPacketPushPull = false;
+        }
+
+        //Mediastart
+
+        public void StartCall()
+        {
+            //stream init
+            IsCallActive = true;
+            stream.Start(remote, 50, 50);
+            source = new AudioStreamSource();
+        
+
+            //stream start recv
+            SpeakerThread = new Thread(new ThreadStart(SpeakerThreadFunction));
+            SpeakerThread.Name = "Speaker Thread";
+            SpeakerThread.Start();
+
+            MicrophoneThread = new Thread(new ThreadStart(MicrophoneThreadFunction));
+            MicrophoneThread.Name = "Microphone Thread";
+            MicrophoneThread.Start();
+        }
+
+        //Speaker Thread
+
+        void SafeStartMediaElement(object obj, EventArgs args)
+        {
+            if (AudioStream.CurrentState != MediaElementState.Playing)
+            {
+                AudioStream.BufferingTime = new TimeSpan(0, 0, 0);
+
+                AudioStream.SetSource(source);
+                AudioStream.Play();
+            }
+        }
+        void SafeStopMediaElement(object obj, EventArgs args)
+        {
+            AudioStream.Stop();
+        }
+
+
+
+
+        public void SpeakerThreadFunction()
+        {
+            TimeSpan tsPTime = TimeSpan.FromMilliseconds(stream.PTimeReceive);
+            int nSamplesPerPacket = stream.AudioCodec.AudioFormat.CalculateNumberOfSamplesForDuration(tsPTime);
+            int nBytesPerPacket = nSamplesPerPacket * stream.AudioCodec.AudioFormat.BytesPerSample;
+            byte[] bDummySample = new byte[nBytesPerPacket];
+            source.PacketSize = nBytesPerPacket;
+            stream.IncomingRTPPacketBuffer.InitialPacketQueueMinimumSize = 4;
+            stream.IncomingRTPPacketBuffer.PacketSizeShiftMax = 10;
+            int nMsTook = 0;
+
+
+            Deployment.Current.Dispatcher.BeginInvoke(new EventHandler(SafeStartMediaElement), null, null);
+            /// Get first packet... have to wait for our rtp buffer to fill
+            byte[] bData = stream.WaitNextPacketSample(true, stream.PTimeReceive * 5, out nMsTook);
+            if ((bData != null) && (bData.Length > 0))
+            {
+
+                source.Write(bData);
+            }
+
+
+            DateTime dtNextPacketExpected = DateTime.Now + tsPTime;
+
+            System.Diagnostics.Stopwatch WaitPacketWatch = new System.Diagnostics.Stopwatch();
+            int nDeficit = 0;
+            while (IsCallActive == true)
+            {
+                bData = stream.WaitNextPacketSample(true, stream.PTimeReceive, out nMsTook);
+                if ((bData != null) && (bData.Length > 0))
+                {
+                    source.Write(bData);
+                }
+
+                TimeSpan tsRemaining = dtNextPacketExpected - DateTime.Now;
+                int nMsRemaining = (int)tsRemaining.TotalMilliseconds;
+                if (nMsRemaining > 0)
+                {
+                    nMsRemaining += nDeficit;
+                    if (nMsRemaining > 0)
+                        System.Threading.Thread.Sleep(nMsRemaining);
+                    else
+                    {
+                        nDeficit = nMsRemaining;
+                    }
+                }
+                else
+                    nDeficit += nMsRemaining;
+
+                dtNextPacketExpected += tsPTime;
+            }
+
+
+            Deployment.Current.Dispatcher.BeginInvoke(new EventHandler(SafeStopMediaElement), null, null);
+          }
+
+        //Microphone Thread
+        public void MicrophoneThreadFunction()
+        {
+            StartMic();
+            int nSamplesPerPacket = stream.AudioCodec.AudioFormat.CalculateNumberOfSamplesForDuration(TimeSpan.FromMilliseconds(stream.PTimeTransmit));
+            int nBytesPerPacket = nSamplesPerPacket * stream.AudioCodec.AudioFormat.BytesPerSample;
+            TimeSpan tsPTime = TimeSpan.FromMilliseconds(stream.PTimeTransmit);
+            DateTime dtNextPacketExpected = DateTime.Now + tsPTime;
+            int nUnavailableAudioPackets = 0;
+            while (IsCallActive == true)
+            {
+                dtNextPacketExpected = DateTime.Now + tsPTime;
+                if (MicrophoneQueue.Size >= nBytesPerPacket)
+                {
+                    byte[] buffer = MicrophoneQueue.GetNSamples(nBytesPerPacket);
+                    stream.SendNextSample(buffer);
+                }
+                else
+                {
+                    nUnavailableAudioPackets++;
+                }
+
+                if (MicrophoneQueue.Size > nBytesPerPacket * 6)
+                    MicrophoneQueue.GetNSamples(MicrophoneQueue.Size - nBytesPerPacket * 5);
+
+                TimeSpan tsRemaining = dtNextPacketExpected - DateTime.Now;
+                int nMsRemaining = (int)tsRemaining.TotalMilliseconds;
+                if (nMsRemaining > 0)
+                {
+
+                    System.Threading.Thread.Sleep(nMsRemaining);
+                }
+            }
+            StopMic();
+        }
+        byte[] buffer = new byte[16 * 40];
+        void StartMic()
+        {
+            Microphone mic = Microphone.Default;
+            buffer = new byte[mic.GetSampleSizeInBytes(TimeSpan.FromMilliseconds(100)) * 4];
+            mic.BufferDuration = TimeSpan.FromMilliseconds(100);
+            mic.BufferReady += new EventHandler<EventArgs>(mic_BufferReady);
+            mic.Start();
+        }
+
+        void StopMic()
+        {
+            Microphone mic = Microphone.Default;
+            mic.BufferReady -= new EventHandler<EventArgs>(mic_BufferReady);
+            mic.Stop();
+        }
+
+        void mic_BufferReady(object sender, EventArgs e)
+        {
+            Microphone mic = Microphone.Default;
+            int nSize = mic.GetData(buffer);
+            MicrophoneQueue.AppendData(buffer, 0, nSize);
+        }
+
+
+       
+
+       
+
+
+        #endregion
     }
-
-
-    //public static class Extensions
-    //{
-    //    public static T GetChildByType<T>(this UIElement element, Func<T, bool> condition)
-    //        where T : UIElement
-    //    {
-    //        List<T> results = new List<T>();
-    //        GetChildrenByType<T>(element, condition, results);
-    //        if (results.Count > 0)
-    //            return results[0];
-    //        else
-    //            return null;
-    //    }
-
-    //    private static void GetChildrenByType<T>(UIElement element, Func<T, bool> condition, List<T> results)
-    //        where T : UIElement
-    //    {
-    //        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
-    //        {
-    //            UIElement child = VisualTreeHelper.GetChild(element, i) as UIElement;
-    //            if (child != null)
-    //            {
-    //                T t = child as T;
-    //                if (t != null)
-    //                {
-    //                    if (condition == null)
-    //                        results.Add(t);
-    //                    else if (condition(t))
-    //                        results.Add(t);
-    //                }
-    //                GetChildrenByType<T>(child, condition, results);
-    //            }
-    //        }
-    //    }
-    //} 
 
 }

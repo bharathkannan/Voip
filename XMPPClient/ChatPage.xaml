@@ -102,7 +102,7 @@
         </ListBox>-->
         
 
-        <TextBox Grid.Row="2" x:Name="TextBoxChatToSend" InputScope="Chat"  KeyDown="TextBoxChatToSend_KeyDown" Grid.ColumnSpan="2"></TextBox>
+        <TextBox Grid.Row="2" x:Name="TextBoxChatToSend" InputScope="Chat"  KeyDown="TextBoxChatToSend_KeyDown" Grid.ColumnSpan="2" TextChanged="TextBoxChatToSend_TextChanged"></TextBox>
         
     </Grid>
 

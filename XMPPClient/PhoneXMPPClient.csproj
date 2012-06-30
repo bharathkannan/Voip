@@ -204,13 +204,13 @@
     <Content Include="Toolkit.Content\ApplicationBar.Select.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\xmedianet-15495\phone.rtp\phone.rtp.csproj">
+      <Project>{7EC1E48F-1605-499B-906A-ECA507BB27F8}</Project>
+      <Name>phone.rtp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OtherLibs\phone.AudioClasses\phone.AudioClasses.csproj">
       <Project>{AA9373BE-5A3F-4DA0-86D8-448D2AA9BBAD}</Project>
       <Name>phone.AudioClasses</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\phone.rtp\phone.rtp.csproj">
-      <Project>{7EC1E48F-1605-499B-906A-ECA507BB27F8}</Project>
-      <Name>phone.rtp</Name>
     </ProjectReference>
     <ProjectReference Include="..\PhoneSocketServer\phone.socketserver.csproj">
       <Project>{CCDE1A18-482A-469C-9115-3C51723026B7}</Project>

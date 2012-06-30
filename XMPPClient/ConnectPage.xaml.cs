@@ -232,6 +232,11 @@ namespace XMPPClient
             acc.Port = 5222;
         }
 
+        private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
      
     }
 }
