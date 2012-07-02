@@ -103,7 +103,7 @@
         
 
         <TextBox Grid.Row="2" x:Name="TextBoxChatToSend" InputScope="Chat"  KeyDown="TextBoxChatToSend_KeyDown" Grid.ColumnSpan="2" TextChanged="TextBoxChatToSend_TextChanged"></TextBox>
-        
+        <MediaElement Grid.Column="1" Grid.Row="1" Height="120" HorizontalAlignment="Left" Margin="97,174,0,0" Name="mediaElement1" VerticalAlignment="Top" Width="160" />
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>

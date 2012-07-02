@@ -350,20 +350,20 @@ namespace XMPPClient
         void XMPPClient_OnNewConversationItem(RosterItem item, bool bReceived, TextMessage msg)
         {
 
-            if (msg.Message.IndexOf("Call from ") == 0 && hack == false)
+            if (msg.Message.IndexOf("Call from ") == 0 && this.hack == false)
             {
-                ButtonStartVoice.Content = "Accept Voice Call";
+                Deployment.Current.Dispatcher.BeginInvoke( () => ButtonStartVoice.Content = "Accept Voice Call" );
                 string ipen = msg.Message.Substring(10);
                 int pos = ipen.IndexOf(':');
                 remote = new IPEndPoint(IPAddress.Parse(ipen.Substring(0, pos)), Convert.ToInt32(ipen.Substring(pos + 1)));
             }
-            else if (msg.Message.IndexOf("Call ok") == 0 && hack == true)
+            else if (msg.Message.IndexOf("Call ok") == 0 && this.hack == true)
             {
                 string ipen = msg.Message.Substring(8);
                 int pos = ipen.IndexOf(':');
                 remote = new IPEndPoint(IPAddress.Parse(ipen.Substring(0, pos)), Convert.ToInt32(ipen.Substring(pos + 1)));
-
                 Deployment.Current.Dispatcher.BeginInvoke(() => { ButtonStartVoice.Content = "End Voice Call"; });
+                this.StartCall();
               
             }
 
@@ -519,13 +519,12 @@ namespace XMPPClient
 
         private void ButtonStartVoice_Click(object sender, RoutedEventArgs e)
         {
-            hack = false;
+            this.hack = false;
             if (ButtonStartVoice.Content.ToString() == "Start Voice Call")
             {
-                hack = true;
+                this.hack = true;
                 this.InitCall();
                 SendMessage("Call from " + serverEp.ToString());
-               
                 this.Focus();
             }
             else if(ButtonStartVoice.Content.ToString() == "Accept Voice Call")
@@ -533,6 +532,8 @@ namespace XMPPClient
                 this.InitCall();
                 SendMessage("Call ok " + serverEp.ToString());
                 this.Focus();
+                this.StartCall();
+                Deployment.Current.Dispatcher.BeginInvoke(() => { ButtonStartVoice.Content = "End Voice Call"; });
             }
         }
         /*
@@ -612,7 +613,7 @@ namespace XMPPClient
 
         #region Myedit
 
-        static bool hack = false;
+        bool hack = false;
         RTPAudioStream stream = null;
         AudioClasses.ByteBuffer MicrophoneQueue = new ByteBuffer();
         IPAddress myip;
@@ -621,13 +622,15 @@ namespace XMPPClient
         Thread SpeakerThread, MicrophoneThread;
         AudioStreamSource source = null;
         IPEndPoint remote;
+        public MediaElement AudioStream1;
 
         public void InitCall()
         {
             myip = IPAddress.Parse("172.16.41.174");
             localEp = new IPEndPoint(myip, 3001);
-            AudioStream.Stop();
-           // FindMyIP();
+            AudioStream1 = this.mediaElement1;
+       //     Deployment.Current.Dispatcher.BeginInvoke( () =>
+          //  AudioStream1.Stop());
             InitializeStream();
             FindStunAddress();
         }
@@ -644,18 +647,8 @@ namespace XMPPClient
                 serverEp = ep;
             else
                 serverEp = ep1;
+            localEp = serverEp;
             myip = serverEp.Address;
-        }
-
-
-
-
-        //FindIP
-        public void FindMyIP()
-        {
-            MyIPAddress my = new MyIPAddress();
-            myip = my.Find();
-            localEp = new IPEndPoint(myip, 3001);
         }
 
         //InitStream
@@ -691,17 +684,17 @@ namespace XMPPClient
 
         void SafeStartMediaElement(object obj, EventArgs args)
         {
-            if (AudioStream.CurrentState != MediaElementState.Playing)
+            if (AudioStream1.CurrentState != MediaElementState.Playing)
             {
-                AudioStream.BufferingTime = new TimeSpan(0, 0, 0);
+                AudioStream1.BufferingTime = new TimeSpan(0, 0, 0);
 
-                AudioStream.SetSource(source);
-                AudioStream.Play();
+                AudioStream1.SetSource(source);
+                AudioStream1.Play();
             }
         }
         void SafeStopMediaElement(object obj, EventArgs args)
         {
-            AudioStream.Stop();
+            AudioStream1.Stop();
         }
 
 
@@ -719,12 +712,11 @@ namespace XMPPClient
             int nMsTook = 0;
 
 
-            Deployment.Current.Dispatcher.BeginInvoke(new EventHandler(SafeStartMediaElement), null, null);
+         //   Deployment.Current.Dispatcher.BeginInvoke(new EventHandler(SafeStartMediaElement), null, null);
             /// Get first packet... have to wait for our rtp buffer to fill
             byte[] bData = stream.WaitNextPacketSample(true, stream.PTimeReceive * 5, out nMsTook);
             if ((bData != null) && (bData.Length > 0))
             {
-
                 source.Write(bData);
             }
 
@@ -760,7 +752,7 @@ namespace XMPPClient
             }
 
 
-            Deployment.Current.Dispatcher.BeginInvoke(new EventHandler(SafeStopMediaElement), null, null);
+          //  Deployment.Current.Dispatcher.BeginInvoke(new EventHandler(SafeStopMediaElement), null, null);
           }
 
         //Microphone Thread

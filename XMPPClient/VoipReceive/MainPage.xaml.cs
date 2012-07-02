@@ -170,7 +170,7 @@ namespace VoipReceive
         }
 
 
-        public void  FindStunAddress()
+        public IPEndPoint FindStunAddress()
         {
             JingleMediaSession session = new JingleMediaSession(localEp);
             session.AudioRTPStream = stream;
@@ -178,6 +178,8 @@ namespace VoipReceive
             Log(ep.ToString());
             IPEndPoint ep1 = session.PerformSTUNRequest(new DnsEndPoint("stun.endigovoip.com", 3478), 4000);
             Log(ep.ToString());
+            if (ep != null) return ep;
+            return ep1;
 
 
 
@@ -280,7 +282,13 @@ namespace VoipReceive
 
         private void button2_Click(object sender, RoutedEventArgs e)
         {
-            this.FindStunAddress();
+            IPEndPoint test = new IPEndPoint(IPAddress.Parse("172.16.41.174"),3001);
+            IPEndPoint remote = this.FindStunAddress();
+            string data = remote.ToString();
+              Log( stream.Testsend(test, data));
+           Log(stream.TestRecv());
+              
+            
         }
 
 
