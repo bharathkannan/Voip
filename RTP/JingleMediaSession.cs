@@ -41,8 +41,30 @@ namespace RTP
     /// <summary>
     ///  Responsible for the RTP stream to an from a remote endpoint, as well as session management
     /// </summary>
+    /// 
+
     public class MediaSession :  INotifyPropertyChanged, IComparer<Candidate>
     {
+        #region MYEDit
+
+        public MediaSession(IPEndPoint local)
+        {
+            UserName = GenerateRandomString(8);
+            Password = GenerateRandomString(16);
+
+            m_objAudioRTPStream.OnUnhandleSTUNMessage += new DelegateSTUNMessage(m_objAudioRTPStream_OnUnhandleSTUNMessage);
+            AudioRTCPStream.OnUnhandleSTUNMessage += new DelegateSTUNMessage(AudioRTCPStream_OnUnhandleSTUNMessage);
+            AddKnownAudioPayload(KnownAudioPayload.Speex16000 | KnownAudioPayload.Speex8000 | KnownAudioPayload.G711 | KnownAudioPayload.G722);
+            Initiator = true;
+            LocalEndpoint = local;
+            Session = "";
+            RemoteJID = "";
+            XMPPClient = null;
+            SessionState = SessionState.Connecting;
+        }
+
+        #endregion
+
         public MediaSession(string strSession, string strRemoteJID, IPEndPoint LocalEp, XMPPClient client)
         {
             UserName = GenerateRandomString(8);
@@ -57,6 +79,7 @@ namespace RTP
             RemoteJID = strRemoteJID;
             XMPPClient = client;
             SessionState = SessionState.Connecting;
+//Uncomment 2 lines dude
 
             CheckGoogleTalk();
             Bind();
@@ -76,7 +99,7 @@ namespace RTP
         /// </summary>
         void CheckGoogleTalk()
         {
-            RosterItem = XMPPClient.FindRosterItem(RemoteJID);
+             RosterItem = XMPPClient.FindRosterItem(RemoteJID);
             if (RosterItem != null)
             {
                 RosterItemPresenceInstance specificinstance = RosterItem.FindInstance(RemoteJID);
@@ -102,7 +125,7 @@ namespace RTP
             RemoteJID = strRemoteJID;
             XMPPClient = client;
             SessionState = SessionState.Connecting;
-            
+            //uncomment 2 lines dude
             CheckGoogleTalk();
             Bind();
         }
@@ -154,7 +177,7 @@ namespace RTP
         protected string RemoteUserName = "";
         protected string RemotePassword = "";
 
-
+//Read
         private RTPAudioStream m_objAudioRTPStream = new RTPAudioStream(0, null);
 
         public RTPAudioStream AudioRTPStream
@@ -165,6 +188,8 @@ namespace RTP
 
         protected RTCPSession AudioRTCPStream = new RTCPSession();
 
+      
+   //Till this     
         protected List<Candidate> LocalCandidates = new List<Candidate>();
         protected List<Candidate> RemoteCandidates = new List<Candidate>();
 
@@ -339,7 +364,6 @@ namespace RTP
             /// 
             if (RemoteCandidates.Count > 0)
                 return;
-
             ParseCandidates(iq);
 
             if (Initiator == true) // we send our transport info in our session initiate, so we should now have both
@@ -414,6 +438,12 @@ namespace RTP
         }
 
         // Start Audio once ICE is done
+
+
+
+        /// <summary>
+        //Needed for audio send
+        /// </summary>
         void StartAudio()
         {
             SessionState = SessionState.Established;
@@ -1113,11 +1143,20 @@ namespace RTP
             return PerformSTUNRequest(epStun, nTimeout);
         }
 
-        public IPEndPoint PerformSTUNRequest(EndPoint epStun, int nTimeout)
+         public IPEndPoint PerformSTUNRequest(EndPoint epStun, int nTimeout)
         {
             return PerformSTUNRequest(epStun, nTimeout, false, false, 0, null, null);
         }
 
+
+         public IPEndPoint PerformSTUNRequest1(EndPoint epStun, int nTimeout)
+         {
+             return PerformSTUNRequest1(epStun, nTimeout, false, false, 0, null, null);
+         }
+
+
+
+        
         /// <summary>
         ///  Send out a stun request to discover our IP address transalation
         /// </summary>
@@ -1125,6 +1164,8 @@ namespace RTP
         /// <returns></returns>
         public IPEndPoint PerformSTUNRequest(EndPoint epStun, int nTimeout, bool bICE, bool bIsControlling, int nPriority, string strUsername, string strPassword)
         {
+
+            //needed
             STUN2Message msgRequest = new STUN2Message();
             msgRequest.Method = StunMethod.Binding;
             msgRequest.Class = StunClass.Request;
@@ -1136,6 +1177,7 @@ namespace RTP
 
             msgRequest.AddAttribute(mattr);
 
+            ///needed
             if (bICE == true)
             {
                 PriorityAttribute pattr = new PriorityAttribute();
@@ -1186,7 +1228,76 @@ namespace RTP
                 }
             }
             return retep;
+
         }
+
+
+        public IPEndPoint PerformSTUNRequest1(EndPoint epStun, int nTimeout, bool bICE, bool bIsControlling, int nPriority, string strUsername, string strPassword)
+        {
+            STUN2Message msgRequest = new STUN2Message();
+            msgRequest.Method = StunMethod.Binding;
+            msgRequest.Class = StunClass.Request;
+
+
+            MappedAddressAttribute mattr = new MappedAddressAttribute();
+            mattr.IPAddress = LocalEndpoint.Address;
+            mattr.Port = (ushort)LocalEndpoint.Port;
+
+            msgRequest.AddAttribute(mattr);
+
+            if (bICE == true)
+            {
+                PriorityAttribute pattr = new PriorityAttribute();
+                pattr.Priority = nPriority;
+                msgRequest.AddAttribute(pattr);
+
+                UseCandidateAttribute uattr = new UseCandidateAttribute();
+                msgRequest.AddAttribute(uattr);
+
+                if (strUsername != null)
+                {
+                    UserNameAttribute unameattr = new UserNameAttribute();
+                    unameattr.UserName = strUsername;
+                    msgRequest.AddAttribute(unameattr);
+                }
+                if (strPassword != null)
+                {
+                    PasswordAttribute passattr = new PasswordAttribute();
+                    passattr.Password = strPassword;
+                    msgRequest.AddAttribute(passattr);
+                }
+
+                if (bIsControlling == true)
+                {
+                    IceControllingAttribute cattr = new IceControllingAttribute();
+                    msgRequest.AddAttribute(cattr);
+                }
+                else
+                {
+                    IceControlledAttribute cattr = new IceControlledAttribute();
+                    msgRequest.AddAttribute(cattr);
+                }
+            }
+
+            STUNMessage ResponseMessage = this.AudioRTPStream.SendRecvSTUN1(epStun, msgRequest, nTimeout);
+
+            IPEndPoint retep = null;
+            if (ResponseMessage != null)
+            {
+                foreach (STUNAttributeContainer cont in ResponseMessage.Attributes)
+                {
+                    if (cont.ParsedAttribute.Type == StunAttributeType.MappedAddress)
+                    {
+
+                        MappedAddressAttribute attrib = cont.ParsedAttribute as MappedAddressAttribute;
+                        retep = new IPEndPoint(attrib.IPAddress, attrib.Port);
+                    }
+                }
+            }
+            return retep;
+
+        }
+
 
         public static uint CalculatePriority(int typepref, int localpref, int nComponentid)
         {
@@ -1246,7 +1357,16 @@ namespace RTP
         {
         }
 
-  
+        #region MyEdit
+       
+        
+        public JingleMediaSession(IPEndPoint local) : base(local) 
+        { 
+        }
+        
+        
+        #endregion
+
         protected override void ParsePayloads(IQ iq)
         {
             JingleIQ jingleiq = iq as JingleIQ;

@@ -177,7 +177,7 @@ namespace RTP
       /// <param name="packet"></param>
       public void AddPacket(RTPPacket packet)
       {
-          m_nTotalPackets++;
+         m_nTotalPackets++;
          m_nLastReceivedSequence = packet.SequenceNumber;
          if (m_bHaveSetInitialSequence == false)
          {

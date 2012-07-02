@@ -7,7 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Collections;
-
+using System.Text;
 namespace SocketServer
 {
     public class ConnectMgr
@@ -202,7 +202,7 @@ namespace SocketServer
                 LogMessage(MessageImportance.Lowest, this.OurGuid, string.Format("Called DoReceive"));
 
                 SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-                args.RemoteEndPoint = m_ipEp; // new IPEndPoint(IPAddress.Any, this.m_ipEp.Port);
+                args.RemoteEndPoint = new IPEndPoint(IPAddress.Any, this.m_ipEp.Port); //m_ipEp; // i edited new IPEndPoint(IPAddress.Any, this.m_ipEp.Port);
                 byte [] bBuffer = new byte[2048];
                 args.SetBuffer(bBuffer, 0, bBuffer.Length);
                 args.Completed += new EventHandler<SocketAsyncEventArgs>(OnReceiveUDP);
@@ -342,6 +342,8 @@ namespace SocketServer
           DoReceive();
       }
 
+
+
       #region ReStarting DoReceive()
       //
       // Only want to start the DoReceive().  The main purpose is to keep ListenOn the local 
@@ -357,5 +359,292 @@ namespace SocketServer
          return true;
       }
       #endregion
-   }
+
+
+     #region Myedit
+
+      static ManualResetEvent _clientDone = new ManualResetEvent(false);
+
+      // Define a timeout in milliseconds for each asynchronous call. If a response is not received within this 
+      // timeout period, the call is aborted.
+      const int TIMEOUT_MILLISECONDS = 5000;
+
+      // The maximum size of the data buffer to use with the asynchronous socket methods
+      const int MAX_BUFFER_SIZE = 2048;
+
+
+        public string MySend(string serverName, int portNumber, string data)
+        {
+            string response = "Operation Timeout";
+
+            // We are re-using the s object that was initialized in the Connect method
+            if (s != null)
+            {
+                // Create SocketAsyncEventArgs context object
+                SocketAsyncEventArgs socketEventArg = new SocketAsyncEventArgs();
+
+                // Set properties on context object
+                socketEventArg.RemoteEndPoint = new DnsEndPoint(serverName, portNumber);
+
+                // Inline event handler for the Completed event.
+                // Note: This event handler was implemented inline in order to make this method self-contained.
+                socketEventArg.Completed += new EventHandler<SocketAsyncEventArgs>(delegate(object so, SocketAsyncEventArgs e)
+                {
+                    response = e.SocketError.ToString();
+
+                    // Unblock the UI thread
+                    _clientDone.Set();
+                });
+
+                // Add the data to be sent into the buffer
+                byte[] payload = Encoding.UTF8.GetBytes(data);
+                socketEventArg.SetBuffer(payload, 0, payload.Length);
+
+                // Sets the state of the event to nonsignaled, causing threads to block
+                _clientDone.Reset();
+
+                // Make an asynchronous Send request over the socket
+                s.SendToAsync(socketEventArg);
+
+                // Block the UI thread for a maximum of TIMEOUT_MILLISECONDS milliseconds.
+                // If no response comes back within this time then proceed
+                _clientDone.WaitOne(TIMEOUT_MILLISECONDS);
+            }
+            else
+            {
+                response = "Socket is not initialized";
+            }
+
+           
+            return response;
+        }
+        public string MyReceive(int portNumber)
+        {
+            string response = "Operation Timeout";
+
+            // We are receiving over an established socket connection
+            if (s != null)
+            {
+                // Create SocketAsyncEventArgs context object
+                SocketAsyncEventArgs socketEventArg = new SocketAsyncEventArgs();
+                socketEventArg.RemoteEndPoint = new IPEndPoint(IPAddress.Any, portNumber);
+
+                // Setup the buffer to receive the data
+                socketEventArg.SetBuffer(new Byte[MAX_BUFFER_SIZE], 0, MAX_BUFFER_SIZE);
+
+                // Inline event handler for the Completed event.
+                // Note: This even handler was implemented inline in order to make this method self-contained.
+                socketEventArg.Completed += new EventHandler<SocketAsyncEventArgs>(delegate(object so, SocketAsyncEventArgs e)
+                {
+                    if (e.SocketError == SocketError.Success)
+                    {
+                        // Retrieve the data from the buffer
+                        response = Encoding.UTF8.GetString(e.Buffer, e.Offset, e.BytesTransferred);
+                        response = response.Trim('\0');
+
+
+                        //involves code in th UI  thread -- called a dispatcher  
+
+
+                    }
+                    else
+                    {
+                        response = e.SocketError.ToString();
+                    }
+
+                    _clientDone.Set();
+                });
+
+                // Sets the state of the event to nonsignaled, causing threads to block
+                _clientDone.Reset();
+
+                // Make an asynchronous Receive request over the socket
+                s.ReceiveFromAsync(socketEventArg);
+
+                // Block the UI thread for a maximum of TIMEOUT_MILLISECONDS milliseconds.
+                // If no response comes back within this time then proceed
+                _clientDone.WaitOne();
+            }
+            else
+            {
+                response = "Socket is not initialized";
+            }
+            return response;
+        }
+
+
+        public string MyReceive1(int portNumber)
+        {
+            string response = "Operation Timeout";
+
+            // We are receiving over an established socket connection
+            if (s != null)
+            {
+                // Create SocketAsyncEventArgs context object
+                SocketAsyncEventArgs socketEventArg = new SocketAsyncEventArgs();
+                socketEventArg.RemoteEndPoint = new IPEndPoint(IPAddress.Any, portNumber);
+
+                // Setup the buffer to receive the data
+                socketEventArg.SetBuffer(new Byte[MAX_BUFFER_SIZE], 0, MAX_BUFFER_SIZE);
+
+                // Inline event handler for the Completed event.
+                // Note: This even handler was implemented inline in order to make this method self-contained.
+                socketEventArg.Completed += new EventHandler<SocketAsyncEventArgs>(delegate(object so, SocketAsyncEventArgs e)
+                {
+                    if (e.SocketError == SocketError.Success)
+                    {
+                        // Retrieve the data from the buffer
+                        response = Encoding.UTF8.GetString(e.Buffer, e.Offset, e.BytesTransferred);
+                        response = response.Trim('\0');
+
+
+                        //involves code in th UI  thread -- called a dispatcher  
+
+
+                    }
+                    else
+                    {
+                        response = e.SocketError.ToString();
+                    }
+
+                    _clientDone.Set();
+                });
+
+                // Sets the state of the event to nonsignaled, causing threads to block
+                _clientDone.Reset();
+
+                // Make an asynchronous Receive request over the socket
+                s.ReceiveFromAsync(socketEventArg);
+
+                // Block the UI thread for a maximum of TIMEOUT_MILLISECONDS milliseconds.
+                // If no response comes back within this time then proceed
+                _clientDone.WaitOne(4000);
+            }
+            else
+            {
+                response = "Socket is not initialized";
+            }
+            return response;
+        }
+
+        public string SendByteArray(byte[] message,DnsEndPoint Remote)
+        {
+            string response = "Operation Timeout";
+
+            string serverName = Remote.Host;
+            int portNumber = Remote.Port;
+
+            // We are re-using the s object that was initialized in the Connect method
+            if (s != null)
+            {
+                // Create SocketAsyncEventArgs context object
+                SocketAsyncEventArgs socketEventArg = new SocketAsyncEventArgs();
+
+                // Set properties on context object
+                socketEventArg.RemoteEndPoint = new DnsEndPoint(serverName, portNumber);
+
+                // Inline event handler for the Completed event.
+                // Note: This event handler was implemented inline in order to make this method self-contained.
+                socketEventArg.Completed += new EventHandler<SocketAsyncEventArgs>(delegate(object so, SocketAsyncEventArgs e)
+                {
+                    response = e.SocketError.ToString();
+
+                    // Unblock the UI thread
+                    _clientDone.Set();
+                });
+
+                // Add the data to be sent into the buffer
+                byte[] payload = message;
+                socketEventArg.SetBuffer(payload, 0, payload.Length);
+
+                // Sets the state of the event to nonsignaled, causing threads to block
+                _clientDone.Reset();
+
+                // Make an asynchronous Send request over the socket
+                s.SendToAsync(socketEventArg);
+
+                // Block the UI thread for a maximum of TIMEOUT_MILLISECONDS milliseconds.
+                // If no response comes back within this time then proceed
+                _clientDone.WaitOne(TIMEOUT_MILLISECONDS);
+            }
+            else
+            {
+                response = "Socket is not initialized";
+            }
+
+
+            return response;
+        }
+
+
+        public byte[] ReceiveByteArray(int portNumber,int timeout)
+        {
+            string response = "Operation Timeout";
+            byte[] ret = null;
+            // We are receiving over an established socket connection
+            if (s != null)
+            {
+                // Create SocketAsyncEventArgs context object
+                SocketAsyncEventArgs socketEventArg = new SocketAsyncEventArgs();
+                socketEventArg.RemoteEndPoint = new IPEndPoint(IPAddress.Any, portNumber);
+
+                // Setup the buffer to receive the data
+                socketEventArg.SetBuffer(new Byte[MAX_BUFFER_SIZE], 0, MAX_BUFFER_SIZE);
+
+                // Inline event handler for the Completed event.
+                // Note: This even handler was implemented inline in order to make this method self-contained.
+                socketEventArg.Completed += new EventHandler<SocketAsyncEventArgs>(delegate(object so, SocketAsyncEventArgs e)
+                {
+                    if (e.SocketError == SocketError.Success)
+                    {
+                        ret = new byte[e.BytesTransferred];
+                        
+                        Array.Copy(e.Buffer,e.Offset,ret,0,e.BytesTransferred);
+                        // Retrieve the data from the buffer
+
+
+                        //involves code in th UI  thread -- called a dispatcher  
+
+
+                    }
+                    else
+                    {
+                        response = e.SocketError.ToString();
+                    }
+
+                    _clientDone.Set();
+                });
+
+                // Sets the state of the event to nonsignaled, causing threads to block
+                _clientDone.Reset();
+
+                // Make an asynchronous Receive request over the socket
+                s.ReceiveFromAsync(socketEventArg);
+
+                // Block the UI thread for a maximum of TIMEOUT_MILLISECONDS milliseconds.
+                // If no response comes back within this time then proceed
+                _clientDone.WaitOne(timeout);
+            }
+            else
+            {
+                response = "Socket is not initialized";
+            }
+            if (ret != null)
+                return ret;
+            return Encoding.UTF8.GetBytes(response);
+        }
+       
+        #endregion
+
+    }
 }
+
+
+
+
+
+
+
+           
+    
+

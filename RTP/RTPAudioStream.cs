@@ -371,5 +371,136 @@ namespace RTP
         
 
         #endregion
+
+
+
+        #region Call Setup
+
+
+        public string Testsend(IPEndPoint remote, String data)
+        {
+            return RTPUDPClient.MySend(remote.Address.ToString(), remote.Port, data);
+        }
+
+        public string TestRecv()
+        {
+            return RTPUDPClient.MyReceive1(4507);
+        }
+
+        public string CreateAndSendSTUN(DnsEndPoint serverEp)
+        {
+            STUN2Message msgRequest = new STUN2Message();
+            msgRequest.Method = StunMethod.Binding;
+            msgRequest.Class = StunClass.Request;
+
+
+            MappedAddressAttribute mattr = new MappedAddressAttribute();
+            mattr.IPAddress = LocalEndpoint.Address;
+            mattr.Port = (ushort)LocalEndpoint.Port;
+
+            msgRequest.AddAttribute(mattr);
+
+            byte[] tosend = msgRequest.Bytes;
+
+            return RTPUDPClient.SendByteArray(tosend, serverEp);
+        }
+
+
+
+        public IPEndPoint RecvSTUN(DnsEndPoint serverEp,int timeout)
+        {
+            byte[] recv = RTPUDPClient.ReceiveByteArray(serverEp.Port,timeout);
+            STUNMessage ResponseMessage = new STUNMessage();
+            ResponseMessage.Bytes = recv;
+            IPEndPoint retep = LocalEndpoint;
+            if (ResponseMessage != null)
+            {
+                foreach (STUNAttributeContainer cont in ResponseMessage.Attributes)
+                {
+                    if (cont.ParsedAttribute.Type == StunAttributeType.MappedAddress)
+                    {
+
+                        MappedAddressAttribute attrib = cont.ParsedAttribute as MappedAddressAttribute;
+                        retep = new IPEndPoint(attrib.IPAddress, attrib.Port);
+                    }
+                }
+            }
+            return retep;
+        }
+
+
+        public  IPEndPoint GetSTUNAddress(DnsEndPoint server,int timeout)
+        {
+            CreateAndSendSTUN(server);
+            return RecvSTUN(server,timeout);
+        }
+
+
+
+
+       
+
+        public bool SignIn(string username)
+        {
+            RTPUDPClient.MySend("172.16.41.174",4505,"set "+username);
+            string result = RTPUDPClient.MyReceive(4505);
+            if(result.Equals("Changed"))
+                    return true;
+            return false;
+	    }
+
+
+        public IPEndPoint FindIpPort(string username)
+        {
+            IPEndPoint ret = new IPEndPoint(IPAddress.Parse("255.255.255.255"), 0);
+            RTPUDPClient.MySend("172.16.41.174", 4505, "get " + username);
+            string result = RTPUDPClient.MyReceive(4505);
+            if (result.Equals("Failed"))
+                return ret;
+            else
+            {
+                int pos = result.IndexOf(":");
+                string a = result.Substring(0, pos);
+                string b = result.Substring(pos + 1);
+                return new IPEndPoint(IPAddress.Parse(a), Convert.ToInt32(b));
+            }
+        }
+
+        public IPEndPoint CallUser(string username,string myname)
+        {
+            IPEndPoint remote = FindIpPort(username);
+            string result = RTPUDPClient.MySend(remote.Address.ToString(), remote.Port, "CallRequest "+myname);
+            return remote;
+        }
+
+        public IPEndPoint WaitForCall()
+        {
+            string result = RTPUDPClient.MyReceive(4505);
+            int pos = result.IndexOf(' ');
+            string mes = result.Substring(0, pos);
+            string uname = result.Substring(pos + 1);
+            if (mes.Equals("CallRequest"))
+            {
+                return FindIpPort(uname);
+            }
+            else
+                return null;
+        }
+
+        public bool SignOut(string username)
+        {
+            RTPUDPClient.MySend("172.16.41.174", 4505, "out " + username);
+            string result = RTPUDPClient.MyReceive(4505);
+            return result.Equals("Removed");
+        }
+
+                   
+            
+
+                  
+            
+
+
+        #endregion
     }
 }

@@ -185,7 +185,7 @@ namespace RTP
             get { return m_nPTimeTransmit; }
             set { m_nPTimeTransmit = value; }
         }
-
+        
         protected IMediaTimer SendTimer = null;
         protected IMediaTimer ExpectPacketTimer = null;
         protected object TimerLock = new object();
@@ -203,7 +203,10 @@ namespace RTP
 #endif
                 IsBound = true;
                 RTPUDPClient.OnReceiveMessage += new SocketServer.UDPSocketClient.DelegateReceivePacket(RTPUDPClient_OnReceiveMessage);
-                RTPUDPClient.StartReceiving();
+
+                //I changed Bind this line should be uncommented
+            //    RTPUDPClient.StartReceiving();
+               // 
 
             }
         }
@@ -229,6 +232,27 @@ namespace RTP
                 if (StunRequestResponses.Contains(req) == true)
                     StunRequestResponses.Remove(req);
             }
+            //RTPUDPClient.StopReceiving();
+            return req.ResponseMessage;
+        }
+
+        public STUNMessage SendRecvSTUN1(EndPoint epStun, STUN2Message msgRequest, int nTimeout)
+        {
+            STUNRequestResponse req = new STUNRequestResponse(msgRequest);
+            lock (StunLock)
+            {
+                StunRequestResponses.Add(req);
+            }
+
+            SendSTUNMessage(msgRequest, epStun);
+
+            bool bResponse = req.WaitForResponse(nTimeout);
+            lock (StunLock)
+            {
+                if (StunRequestResponses.Contains(req) == true)
+                    StunRequestResponses.Remove(req);
+            }
+            
             return req.ResponseMessage;
         }
 
@@ -258,8 +282,10 @@ namespace RTP
                 ExpectPacketTimer = SocketServer.QuickTimerControllerCPU.CreateTimer(PTimeReceive, new SocketServer.DelegateTimerFired(OnTimeToForwardPacket), "", null);
             }
 
+                   // byte[] test = new byte[100];
+           // RTPUDPClient.SendUDP(test, test.Length, new IPEndPoint(IPAddress.Parse("172.16.41.174"), 4507));
             IsActive = true;
-
+            RTPUDPClient.StartReceiving();
             return true;
         }
 
