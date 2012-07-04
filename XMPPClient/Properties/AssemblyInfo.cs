@@ -23,7 +23,7 @@ using System.Resources;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("01d114dd-f283-427f-9933-0553ad8e5ef5")]
 
-// Version information for an assembly consists of the following four values:
+// Version information for an assembly consists of the following four values:C:\Users\bharathwaan.k\Documents\Visual Studio 2010\Projects\Voip\XMPPClient\Properties\AssemblyInfo.cs
 //
 //      Major Version
 //      Minor Version 

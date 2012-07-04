@@ -285,7 +285,7 @@ namespace VoipReceive
             IPEndPoint test = new IPEndPoint(IPAddress.Parse("172.16.41.174"),3001);
             IPEndPoint remote = this.FindStunAddress();
             string data = remote.ToString();
-              Log( stream.Testsend(test, data));
+              Log(stream.Testsend(test, data));
            Log(stream.TestRecv());
               
             

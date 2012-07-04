@@ -72,6 +72,7 @@ namespace XMPPClient
             // Show graphics profiling information while debugging.
             if (System.Diagnostics.Debugger.IsAttached)
             {
+                BackgroundAudioPlayer.Instance.Close();
                 // Display the current frame rate counters.
                 Application.Current.Host.Settings.EnableFrameRateCounter = true;
 
@@ -580,6 +581,7 @@ namespace XMPPClient
         {
             if (System.Diagnostics.Debugger.IsAttached)
             {
+                BackgroundAudioPlayer.Instance.Close();
                 // A navigation has failed; break into the debugger
                 System.Diagnostics.Debugger.Break();
             }
@@ -596,6 +598,7 @@ namespace XMPPClient
 
             if (System.Diagnostics.Debugger.IsAttached)
             {
+                BackgroundAudioPlayer.Instance.Close();
                 // An unhandled exception has occurred; break into the debugger
                 System.Diagnostics.Debugger.Break();
             }

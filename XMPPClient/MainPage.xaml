@@ -313,7 +313,7 @@
             </toolkit:LongListSelector.GroupHeaderTemplate>
 
         </toolkit:LongListSelector>
-
+        <MediaElement Grid.Row="3" Height="120" HorizontalAlignment="Left" Margin="75,156,0,0" Name="mediaElement1" VerticalAlignment="Top" Width="160" Grid.Column="1" />
     </Grid>
 
 </phone:PhoneApplicationPage>

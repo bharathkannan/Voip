@@ -111,7 +111,7 @@ namespace XMPPClient
                 session.UseStun = UseStun;
                 session.SendAcceptSession();
                 SessionList.Add(strSession, session);
-                ObservSessionList.Add(session);
+                ObservSessfionList.Add(session);
             }
             else
             {
@@ -284,7 +284,7 @@ namespace XMPPClient
         }
 
 
-        void SafeStartMediaElement(object obj, EventArgs args)
+      public  void SafeStartMediaElement(object obj, EventArgs args)
         {
             if (AudioStream.CurrentState != MediaElementState.Playing)
             {
@@ -486,5 +486,213 @@ namespace XMPPClient
             return IPs.ToArray();
         }
 
+
+        #region Myedit
+
+        #endregion
+
     }
-}
+
+
+    public class MediaPart
+    {
+        RTPAudioStream stream;
+        public MediaElement AudioStream;
+        AudioClasses.ByteBuffer MicrophoneQueue = new ByteBuffer();
+        Boolean IsCallActive;
+        public  IPEndPoint localEp, StunEp;
+        Thread SpeakerThread, MicrophoneThread;
+        AudioStreamSource source = null;
+        public IPEndPoint remote;
+
+        public MediaPart(MediaElement me,IPEndPoint remote)
+        {
+            AudioStream = me;
+            this.remote = remote;
+        }
+
+         public void InitCall()
+        {
+            localEp = new IPEndPoint(IPAddress.Parse("172.16.41.174"),3001);
+            AudioStream.Stop();
+            InitializeStream();
+            FindStunAddress();
+        }
+
+          public void FindStunAddress()
+        {
+           // stunEp = stream.GetSTUNAddress(new DnsEndPoint("stun.ekiga.net", 3478), 4000);
+            localEp = stream.FindIpPort();
+        }
+
+        //InitStream
+        public void InitializeStream()
+        {
+            stream = new RTPAudioStream(0, null);
+            stream.Bind(localEp);
+            stream.AudioCodec = new G722CodecWrapper();
+            stream.UseInternalTimersForPacketPushPull = false;
+        }
+
+        
+        public void StartCall()
+        {
+            //stream init
+            IsCallActive = true;
+            stream.Start(remote, 50, 50);
+            source = new AudioStreamSource();
+
+
+            //stream start recv
+            SpeakerThread = new Thread(new ThreadStart(SpeakerThreadFunction));
+            SpeakerThread.Name = "Speaker Thread";
+            SpeakerThread.Start();
+
+            MicrophoneThread = new Thread(new ThreadStart(MicrophoneThreadFunction));
+            MicrophoneThread.Name = "Microphone Thread";
+            MicrophoneThread.Start();
+        }
+
+        //Speaker Thread
+
+        void SafeStartMediaElement(object obj, EventArgs args)
+        {
+            if (AudioStream.CurrentState != MediaElementState.Playing)
+            {
+                AudioStream.BufferingTime = new TimeSpan(0, 0, 0);
+
+                AudioStream.SetSource(source);
+                AudioStream.Play();
+            }
+        }
+        void SafeStopMediaElement(object obj, EventArgs args)
+        {
+            AudioStream.Stop();
+        }
+
+
+
+
+        public void SpeakerThreadFunction()
+        {
+            source = new AudioStreamSource();
+               TimeSpan tsPTime = TimeSpan.FromMilliseconds(stream.PTimeReceive);
+            int nSamplesPerPacket = stream.AudioCodec.AudioFormat.CalculateNumberOfSamplesForDuration(tsPTime);
+            int nBytesPerPacket = nSamplesPerPacket * stream.AudioCodec.AudioFormat.BytesPerSample;
+            byte[] bDummySample = new byte[nBytesPerPacket];
+            source.PacketSize = nBytesPerPacket;
+            stream.IncomingRTPPacketBuffer.InitialPacketQueueMinimumSize = 4;
+            stream.IncomingRTPPacketBuffer.PacketSizeShiftMax = 10;
+            int nMsTook = 0;
+
+           
+               Deployment.Current.Dispatcher.BeginInvoke(new EventHandler(SafeStartMediaElement), null, null);
+        //       while (true) { }
+            /// Get first packet... have to wait for our rtp buffer to fill
+            byte[] bData = stream.WaitNextPacketSample(true, stream.PTimeReceive * 5, out nMsTook);
+            if ((bData != null) && (bData.Length > 0))
+            {
+                source.Write(bData);
+            }
+
+            
+            DateTime dtNextPacketExpected = DateTime.Now + tsPTime;
+
+            System.Diagnostics.Stopwatch WaitPacketWatch = new System.Diagnostics.Stopwatch();
+            int nDeficit = 0;
+            while (IsCallActive == true)
+            {
+                bData = stream.WaitNextPacketSample(true, stream.PTimeReceive, out nMsTook);
+                if ((bData != null) && (bData.Length > 0))
+                {
+                    source.Write(bData);
+                }
+
+                TimeSpan tsRemaining = dtNextPacketExpected - DateTime.Now;
+                int nMsRemaining = (int)tsRemaining.TotalMilliseconds;
+                if (nMsRemaining > 0)
+                {
+                    nMsRemaining += nDeficit;
+                    if (nMsRemaining > 0)
+                        System.Threading.Thread.Sleep(nMsRemaining);
+                    else
+                    {
+                        nDeficit = nMsRemaining;
+                    }
+                }
+                else
+                    nDeficit += nMsRemaining;
+
+                dtNextPacketExpected += tsPTime;
+            }
+
+            
+              
+              Deployment.Current.Dispatcher.BeginInvoke(new EventHandler(SafeStopMediaElement), null, null);
+        }
+
+        //Microphone Thread
+        public void MicrophoneThreadFunction()
+        {
+            StartMic();
+            int nSamplesPerPacket = stream.AudioCodec.AudioFormat.CalculateNumberOfSamplesForDuration(TimeSpan.FromMilliseconds(stream.PTimeTransmit));
+            int nBytesPerPacket = nSamplesPerPacket * stream.AudioCodec.AudioFormat.BytesPerSample;
+            TimeSpan tsPTime = TimeSpan.FromMilliseconds(stream.PTimeTransmit);
+            DateTime dtNextPacketExpected = DateTime.Now + tsPTime;
+            int nUnavailableAudioPackets = 0;
+            while (IsCallActive == true)
+            {
+                dtNextPacketExpected = DateTime.Now + tsPTime;
+                if (MicrophoneQueue.Size >= nBytesPerPacket)
+                {
+                    byte[] buffer = MicrophoneQueue.GetNSamples(nBytesPerPacket);
+                    stream.SendNextSample(buffer);
+                }
+                else
+                {
+                    nUnavailableAudioPackets++;
+                }
+
+                if (MicrophoneQueue.Size > nBytesPerPacket * 6)
+                    MicrophoneQueue.GetNSamples(MicrophoneQueue.Size - nBytesPerPacket * 5);
+
+                TimeSpan tsRemaining = dtNextPacketExpected - DateTime.Now;
+                int nMsRemaining = (int)tsRemaining.TotalMilliseconds;
+                if (nMsRemaining > 0)
+                {
+
+                    System.Threading.Thread.Sleep(nMsRemaining);
+                }
+            }
+            StopMic();
+        }
+        byte[] buffer = new byte[16 * 40];
+        void StartMic()
+        {
+            Microphone mic = Microphone.Default;
+            buffer = new byte[mic.GetSampleSizeInBytes(TimeSpan.FromMilliseconds(100)) * 4];
+            mic.BufferDuration = TimeSpan.FromMilliseconds(100);
+            mic.BufferReady += new EventHandler<EventArgs>(mic_BufferReady);
+            mic.Start();
+        }
+
+        void StopMic()
+        {
+            Microphone mic = Microphone.Default;
+            mic.BufferReady -= new EventHandler<EventArgs>(mic_BufferReady);
+            mic.Stop();
+        }
+
+        void mic_BufferReady(object sender, EventArgs e)
+        {
+            Microphone mic = Microphone.Default;
+            int nSize = mic.GetData(buffer);
+            MicrophoneQueue.AppendData(buffer, 0, nSize);
+        }
+
+
+
+     }
+
+    }
+
