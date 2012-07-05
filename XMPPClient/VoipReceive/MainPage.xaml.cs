@@ -31,7 +31,9 @@ namespace VoipReceive
         IPEndPoint localEp;
         Thread SpeakerThread,MicrophoneThread;
         AudioStreamSource source = null;
-        IPEndPoint remote;
+        IPEndPoint remote,stunEp;
+        string myname;
+        IPEndPoint[] remotecandidates,localcandidates;
         // Constructor
         public MainPage()
         {
@@ -69,6 +71,17 @@ namespace VoipReceive
             Log(localEp.ToString());
             stream.AudioCodec = new G722CodecWrapper();
             stream.UseInternalTimersForPacketPushPull = false;
+            try
+            {
+                stunEp = stream.GetSTUNAddress(new DnsEndPoint("stun.ekiga.net", 3478), 4000);
+            }
+            catch (Exception e)
+            {
+                Log("Stun address retrieval failed.Cant work with this device.");
+            }
+
+            Log(stunEp.ToString());
+
         }     
        
         
@@ -157,11 +170,16 @@ namespace VoipReceive
         private void SignIn_Click(object sender, RoutedEventArgs e)
         {
            bool result = stream.SignIn(textBox1.Text);
-            int ind = (result.Equals(true)?0:1);
+           int ind = (result.Equals(true)?0:1);
            string[] arr = new string[2];
            arr[0]="success";
            arr[1]="failure";
            Log("Signing in "+arr[ind] + '\n');
+           myname = textBox1.Text;
+           localEp = stream.FindIpPort(myname);
+           localcandidates = new IPEndPoint[2];
+           localcandidates[0] = localEp;
+           localcandidates[1] = stunEp;
         }
 
         private void textBox1_TextChanged(object sender, TextChangedEventArgs e)
@@ -170,25 +188,13 @@ namespace VoipReceive
         }
 
 
-        public IPEndPoint FindStunAddress()
-        {
-            JingleMediaSession session = new JingleMediaSession(localEp);
-            session.AudioRTPStream = stream;
-            IPEndPoint ep = session.PerformSTUNRequest(new DnsEndPoint("stun.ekiga.net",3478),4000);
-            Log(ep.ToString());
-            IPEndPoint ep1 = session.PerformSTUNRequest(new DnsEndPoint("stun.endigovoip.com", 3478), 4000);
-            Log(ep.ToString());
-            if (ep != null) return ep;
-            return ep1;
-
-
-
-        }        
-        private void button6_Click(object sender, RoutedEventArgs e)
+              private void button6_Click(object sender, RoutedEventArgs e)
         {
             String username = textBox2.Text;
-            remote = stream.CallUser(username,textBox1.Text);
-            Log("Calling " + remote.ToString());
+            remotecandidates = stream.CallUser(username, myname, localEp.ToString() + ';' + stunEp.ToString());
+            remote = stream.StartNeg(true, localcandidates, remotecandidates);
+            if (remote != null)
+                Log(remote.ToString());
             StartCall();
         }
 
@@ -199,7 +205,6 @@ namespace VoipReceive
             stream.Start(remote, 50, 50);
             source = new AudioStreamSource();
             Log("Stream Initialised");
-
             //stream start recv
             SpeakerThread = new Thread(new ThreadStart(SpeakerThreadFunction));
             SpeakerThread.Name = "Speaker Thread";
@@ -272,25 +277,14 @@ namespace VoipReceive
         }
         private void button4_Click(object sender, RoutedEventArgs e)
         {
-            remote = stream.WaitForCall();
-            if (remote != null)
-            {
-                //do start of mic and headphone and other stream stuff
-                StartCall();
-            }
+             remotecandidates   = stream.WaitForCall(localEp.ToString()+';'+stunEp.ToString(),myname);
+             remote = stream.StartNeg(false, localcandidates, remotecandidates);
+            if(remote!=null)
+             Log(remote.ToString());
+            StartCall();
         }
 
-        private void button2_Click(object sender, RoutedEventArgs e)
-        {
-            IPEndPoint test = new IPEndPoint(IPAddress.Parse("172.16.41.174"),3001);
-            IPEndPoint remote = this.FindStunAddress();
-            string data = remote.ToString();
-              Log(stream.Testsend(test, data));
-           Log(stream.TestRecv());
-              
-            
-        }
-
+       
 
 
 

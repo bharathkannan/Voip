@@ -496,7 +496,7 @@ namespace XMPPClient
 
     public class MediaPart
     {
-        RTPAudioStream stream;
+        public  RTPAudioStream stream;
         public MediaElement AudioStream;
         AudioClasses.ByteBuffer MicrophoneQueue = new ByteBuffer();
         Boolean IsCallActive;
@@ -522,7 +522,7 @@ namespace XMPPClient
           public void FindStunAddress()
         {
            // stunEp = stream.GetSTUNAddress(new DnsEndPoint("stun.ekiga.net", 3478), 4000);
-            localEp = stream.FindIpPort();
+         //   localEp = stream.FindIpPort();
         }
 
         //InitStream

@@ -364,7 +364,12 @@ namespace XMPPClient
                 int pos = ipen.IndexOf(':');
                 me.remote = new IPEndPoint(IPAddress.Parse(ipen.Substring(0, pos)), Convert.ToInt32(ipen.Substring(pos + 1)));
                 Deployment.Current.Dispatcher.BeginInvoke(() => { ButtonStartVoice.Content = "End Voice Call"; });
-                me.StartCall();
+                Datastore.Add(me.localEp, "localEp");
+                Datastore.Add(me.stream, "stream");
+                Datastore.Add(me.remote, "remoteEp");
+                Deployment.Current.Dispatcher.BeginInvoke(() =>
+                this.NavigationService.Navigate(new Uri("/TestPAge.xaml?", UriKind.Relative)));
+                
 
             }
 
@@ -520,8 +525,13 @@ namespace XMPPClient
 
         private void ButtonStartVoice_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new Uri("/TestPAge.xaml", UriKind.Relative));
-            return;
+        /*    me = new MediaPart(AudioStream, null);
+            me.InitCall();
+            Datastore.Add(me.localEp, "localEp");
+            Datastore.Add(me.stream, "stream");
+            Datastore.Add(me.localEp,"remoteEp");
+            this.NavigationService.Navigate(new Uri("/TestPAge.xaml?", UriKind.Relative));
+         */
             this.hack = false;
             if (ButtonStartVoice.Content.ToString() == "Start Voice Call")
             {
@@ -534,11 +544,13 @@ namespace XMPPClient
             else if (ButtonStartVoice.Content.ToString() == "Accept Voice Call")
             {
                 me.InitCall();
-               
                 this.Focus();
-                me.StartCall();
+                Datastore.Add(me.localEp, "localEp");
+                Datastore.Add(me.stream, "stream");
+                Datastore.Add(me.remote, "remoteEp");
                 Deployment.Current.Dispatcher.BeginInvoke(() => { ButtonStartVoice.Content = "End Voice Call"; });
                 SendMessage("Call ok " + me.localEp.ToString());
+                this.NavigationService.Navigate(new Uri("/TestPAge.xaml?", UriKind.Relative));
 
             }
 
@@ -637,7 +649,7 @@ namespace XMPPClient
             myip = IPAddress.Parse("172.16.41.174");
             localEp = new IPEndPoint(myip, 3001);
    //         AudioStream1 = this.mediaElement1;
-              AudioStream.Stop();
+       //     AudioStream.Stop();
             InitializeStream();
             FindStunAddress();
         }
@@ -647,7 +659,7 @@ namespace XMPPClient
         public void FindStunAddress()
         {
            // StunEp = stream.GetSTUNAddress(new DnsEndPoint("stun.ekiga.net", 3478), 4000);
-            localEp = stream.FindIpPort();
+          //  localEp = stream.FindIpPort();
         }
 
         //InitStream

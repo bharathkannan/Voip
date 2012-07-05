@@ -30,6 +30,37 @@ using Microsoft.Phone.BackgroundAudio;
 
 namespace XMPPClient
 {
+    public class Datastore
+    {
+        static Dictionary<String, Object> ObjectDictionary = new Dictionary<String, Object>();
+
+         public static bool Add(Object obj, String key)
+        {
+            if (ObjectDictionary.ContainsKey(key))
+                return false;
+            ObjectDictionary.Add(key, obj);
+            return true;
+        }
+        public static Object Find(String key)
+        {
+            if (ObjectDictionary.ContainsKey(key))
+                return ObjectDictionary[key];
+            return null;
+        }
+        public static void Remove(String key)
+        {
+            if (ObjectDictionary.ContainsKey(key))
+            {
+                ObjectDictionary.Remove(key);
+            }
+        }
+    };
+    
+       
+
+            
+
+
     public partial class App : Application, SocketServer.ILogInterface
     {
         /// <summary>
