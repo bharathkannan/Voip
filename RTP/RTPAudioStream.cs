@@ -377,6 +377,9 @@ namespace RTP
         #region Call Setup
 
 
+        public IPEndPoint Server = new IPEndPoint(IPAddress.Parse("172.16.41.174"), 4505);
+
+
         public string Testsend(IPEndPoint remote, String data)
         {
             return RTPUDPClient.MySend(remote.Address.ToString(), remote.Port, data);
@@ -442,7 +445,7 @@ namespace RTP
 
         public bool SignIn(string username)
         {
-            RTPUDPClient.MySend("172.16.41.174",4505,"set "+username);
+            RTPUDPClient.MySend(Server.Address.ToString(),Server.Port,"set "+username);
             string result = RTPUDPClient.MyReceive(4505);
             if(result.Equals("Changed"))
                     return true;
@@ -453,7 +456,7 @@ namespace RTP
         public IPEndPoint FindIpPort(string username)
         {
             IPEndPoint ret = new IPEndPoint(IPAddress.Parse("255.255.255.255"), 0);
-            RTPUDPClient.MySend("172.16.41.174", 4505, "get " + username);
+            RTPUDPClient.MySend(Server.Address.ToString(),Server.Port, "get " + username);
             string result = RTPUDPClient.MyReceive(4505);
             if (result.Equals("Failed"))
                 return ret;
@@ -487,12 +490,100 @@ namespace RTP
                 return null;
         }
 
+
+
+
+        public IPEndPoint[] WaitForCall(string tosend,string uname)
+        {
+           
+
+            string result = RTPUDPClient.MyReceive(4505);
+            int pos = result.IndexOf(' ');
+            string sender = result.Substring(0, pos);
+            string remain = result.Substring(pos+1);
+            IPEndPoint[] ret = new IPEndPoint[2];
+            ret[0] = ConvertTo(remain.Substring(0,remain.IndexOf(';')));
+            ret[1] = ConvertTo(remain.Substring(remain.IndexOf(';')+1));
+            RTPUDPClient.MySend(Server.Address.ToString(),Server.Port, "snd " + uname + ' ' + sender + ' ' + tosend);
+            return ret;
+
+            
+        }
+
+
+        public IPEndPoint StartNeg(bool IsCaller, IPEndPoint[] local, IPEndPoint[] remote)
+        {
+            if (IsCaller)
+            {
+                bool done = false;
+                for (int i = 0; i < 2; i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        if (!done)
+                        {
+                            IPEndPoint from = local[i];
+                            IPEndPoint to = remote[j];
+                            RTPUDPClient.MySend(to.Address.ToString(), to.Port, "tst " + from.ToString());
+                            string res = RTPUDPClient.MyReceive1(4505);
+                            if (res == "Success")
+                            {
+                                RTPUDPClient.MySend(to.Address.ToString(), to.Port, "fin " + from.ToString());
+                                return to;
+                            }
+                        }
+                    }
+                }
+                return null;
+
+            }
+            else
+            {
+            top:
+                string message = RTPUDPClient.MyReceive(4505);
+                string mestype = message.Substring(0, 3);
+                string remain = message.Substring(4);
+                if (mestype.Equals("fin"))
+                {
+                    return new IPEndPoint(IPAddress.Parse(remain.Substring(0, remain.IndexOf(':'))), Convert.ToInt32(remain.Substring(remain.IndexOf(':')+1)));
+                }
+                else if (mestype.Equals("tst"))
+                {
+                    IPEndPoint to = new IPEndPoint(IPAddress.Parse(remain.Substring(0, remain.IndexOf(':'))), Convert.ToInt32(remain.Substring(remain.IndexOf(':')+1)));
+                    RTPUDPClient.MySend(to.Address.ToString(), to.Port, "Success");
+                    goto top;
+                }
+            }
+            return null;
+        }
+
+        public IPEndPoint[] CallUser(string username, string myname, string localCandidates)
+        {
+            RTPUDPClient.MySend(Server.Address.ToString(),Server.Port, "snd " + myname + " " + username + " " + localCandidates);
+            string result = RTPUDPClient.MyReceive(4505);
+            int pos = result.IndexOf(' ');
+            string sender = result.Substring(0, pos);
+            string remain = result.Substring(pos + 1);
+            IPEndPoint[] ret = new IPEndPoint[2];
+            ret[0] = ConvertTo(remain.Substring(0, remain.IndexOf(';')));
+            ret[1] = ConvertTo(remain.Substring(remain.IndexOf(';') + 1));
+            return ret;
+        }
+                
+
+        public IPEndPoint ConvertTo(string s)
+        {
+            int pos = s.IndexOf(':');
+            IPEndPoint ret = new IPEndPoint(IPAddress.Parse(s.Substring(0,pos)),Convert.ToInt32(s.Substring(pos+1)));
+            return ret;
+        }
         public bool SignOut(string username)
         {
-            RTPUDPClient.MySend("172.16.41.174", 4505, "out " + username);
+            RTPUDPClient.MySend(Server.Address.ToString(),Server.Port, "out " + username);
             string result = RTPUDPClient.MyReceive(4505);
             return result.Equals("Removed");
         }
+
 
                    
             
